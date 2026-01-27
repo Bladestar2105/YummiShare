@@ -2,11 +2,19 @@ import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { FAB, Card, Title, Paragraph, ActivityIndicator, Text } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { getAllRecipes } from '../services/localDataService';
-import { Recipe } from '../types';
+import { Recipe, RootStackParamList } from '../types';
+
+const ListEmptyComponent = () => (
+  <View style={styles.emptyContainer}>
+    <Text style={styles.emptyText}>No recipes yet.</Text>
+    <Text style={styles.emptySubtext}>Tap the '+' button to create your first one!</Text>
+  </View>
+);
 
 const RecipesScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -33,21 +41,14 @@ const RecipesScreen: React.FC = () => {
     }, [])
   );
 
-  const renderRecipe = ({ item }: { item: Recipe }) => (
+  const renderRecipe = useCallback(({ item }: { item: Recipe }) => (
     <Card style={styles.card} onPress={() => navigation.navigate('RecipeDetail', { recipeId: item.id })}>
       <Card.Content>
         <Title>{item.name}</Title>
         <Paragraph numberOfLines={2}>{item.description}</Paragraph>
       </Card.Content>
     </Card>
-  );
-
-  const ListEmptyComponent = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>No recipes yet.</Text>
-      <Text style={styles.emptySubtext}>Tap the '+' button to create your first one!</Text>
-    </View>
-  );
+  ), [navigation]);
 
   if (isLoading) {
     return <ActivityIndicator animating={true} size="large" style={styles.loader} />;
