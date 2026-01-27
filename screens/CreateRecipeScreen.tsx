@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
-import { Button, TextInput, Title, Paragraph, HelperText, IconButton } from 'react-native-paper';
+import { Button, TextInput, Title, Paragraph, HelperText, IconButton, SegmentedButtons } from 'react-native-paper';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -32,6 +32,7 @@ const recipeFormSchema = z.object({
     (val) => parseInt(String(val), 10),
     z.number({ invalid_type_error: "Must be a number" }).positive("Must be > 0")
   ),
+  difficulty: z.enum(['easy', 'medium', 'hard']),
   ingredients: z.array(ingredientSchema).min(1, "At least one ingredient is required"),
   steps: z.array(z.object({ value: z.string().min(5, "Step must be at least 5 characters") })).min(1, "At least one step is required"),
 });
@@ -45,6 +46,7 @@ const CreateRecipeScreen: React.FC = () => {
     defaultValues: {
       name: '',
       description: '',
+      difficulty: 'medium',
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
     },
@@ -66,7 +68,6 @@ const CreateRecipeScreen: React.FC = () => {
         ...data,
         steps: data.steps.map(step => step.value),
         category: 'main-course', // Placeholder
-        difficulty: 'medium',   // Placeholder
         isPublic: false,        // Placeholder
         tags: [],               // Placeholder
       };
@@ -143,6 +144,23 @@ const CreateRecipeScreen: React.FC = () => {
             <TextInput label="Servings" mode="outlined" keyboardType="numeric" style={styles.input} onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.servings} />
         )} />
         {errors.servings && <HelperText type="error">{errors.servings.message}</HelperText>}
+
+      <Paragraph style={styles.subtitle}>Difficulty</Paragraph>
+      <Controller
+        name="difficulty"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <SegmentedButtons
+            value={value}
+            onValueChange={onChange}
+            buttons={[
+              { value: 'easy', label: 'Easy' },
+              { value: 'medium', label: 'Medium' },
+              { value: 'hard', label: 'Hard' },
+            ]}
+          />
+        )}
+      />
 
       <Paragraph style={styles.subtitle}>Ingredients</Paragraph>
       {ingredientFields.map((item, index) => (
