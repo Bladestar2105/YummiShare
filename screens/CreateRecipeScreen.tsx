@@ -45,7 +45,7 @@ const CreateRecipeScreen: React.FC = () => {
     defaultValues: {
       name: '',
       description: '',
-      ingredients: [{ name: '', amount: 0, unit: '' }],
+      ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
     },
   });
@@ -159,7 +159,7 @@ const CreateRecipeScreen: React.FC = () => {
         </View>
       ))}
       {errors.ingredients && <HelperText type="error">{errors.ingredients.message}</HelperText>}
-      <Button mode="outlined" style={styles.addButton} onPress={() => appendIngredient({ name: '', amount: 0, unit: '' })}>
+      <Button mode="outlined" style={styles.addButton} onPress={() => appendIngredient({ name: '', amount: 1, unit: '' })}>
         Add Ingredient
       </Button>
 
