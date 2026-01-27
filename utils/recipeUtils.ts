@@ -1,5 +1,5 @@
 import { Recipe, Ingredient } from '../types'
-import { DEFAULT_RECIPE_VALUES } from '../config/firebase'
+import { DEFAULT_RECIPE_VALUES } from '../config/appConfig'
 
 /**
  * Calculate total time (prep + cook)
@@ -159,7 +159,7 @@ export const filterByMaxTime = (
   if (!maxMinutes) return recipes
   
   return recipes.filter(recipe => 
-    (recipe.prepTime + recipe.cookTime) <= maxMinutes
+    recipe.totalTime <= maxMinutes
   )
 }
 
