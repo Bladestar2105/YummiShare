@@ -6,31 +6,35 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { RecipeFormData } from '../types';
 import { saveRecipe } from '../services/localDataService';
+import { CATEGORIES, getCategoryName } from '../config/categories';
 
 // Zod Schema for Validation
 const ingredientSchema = z.object({
   name: z.string().min(1, "Name is required"),
   amount: z.preprocess(
     (val) => parseFloat(String(val)),
-    z.number({ invalid_type_error: "Must be a number" }).positive("Must be > 0")
+    z.number().positive("Must be > 0")
   ),
   unit: z.string().min(1, "Unit is required"),
 });
 
+const categoryIds = CATEGORIES.map((c) => c.id) as [string, ...string[]];
+
 const recipeFormSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
+  category: z.enum(categoryIds),
   prepTime: z.preprocess(
     (val) => parseInt(String(val), 10),
-    z.number({ invalid_type_error: "Must be a number" }).positive("Must be > 0")
+    z.number().positive("Must be > 0")
   ),
   cookTime: z.preprocess(
     (val) => parseInt(String(val), 10),
-    z.number({ invalid_type_error: "Must be a number" }).positive("Must be > 0")
+    z.number().positive("Must be > 0")
   ),
   servings: z.preprocess(
     (val) => parseInt(String(val), 10),
-    z.number({ invalid_type_error: "Must be a number" }).positive("Must be > 0")
+    z.number().positive("Must be > 0")
   ),
   ingredients: z.array(ingredientSchema).min(1, "At least one ingredient is required"),
   steps: z.array(z.object({ value: z.string().min(5, "Step must be at least 5 characters") })).min(1, "At least one step is required"),
@@ -48,6 +52,7 @@ const CreateRecipeScreen: React.FC = () => {
     defaultValues: {
       name: '',
       description: '',
+      category: 'main-course',
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
       tags: [],
@@ -144,6 +149,40 @@ const CreateRecipeScreen: React.FC = () => {
       />
       {errors.description && <HelperText type="error">{errors.description.message}</HelperText>}
 
+      <Controller
+        name="category"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <View style={styles.input}>
+            <Menu
+              visible={menuVisible}
+              onDismiss={closeMenu}
+              anchor={
+                <TouchableRipple onPress={openMenu}>
+                  <TextInput
+                    label="Category"
+                    mode="outlined"
+                    value={getCategoryName(value as any)}
+                    editable={false}
+                    right={<TextInput.Icon icon="menu-down" />}
+                  />
+                </TouchableRipple>
+              }
+            >
+              {CATEGORIES.map((cat) => (
+                <Menu.Item
+                  key={cat.id}
+                  onPress={() => {
+                    onChange(cat.id);
+                    closeMenu();
+                  }}
+                  title={`${cat.icon} ${cat.name}`}
+                />
+              ))}
+            </Menu>
+          </View>
+        )}
+      />
 
       <Paragraph style={styles.subtitle}>Timings & Servings</Paragraph>
       <View style={styles.row}>
