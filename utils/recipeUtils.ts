@@ -191,7 +191,7 @@ export const sortRecipes = (
     
     case 'quick':
       return sorted.sort((a, b) => 
-        (a.prepTime + a.cookTime) - (b.prepTime + b.cookTime)
+        a.totalTime - b.totalTime
       )
     
     default:
