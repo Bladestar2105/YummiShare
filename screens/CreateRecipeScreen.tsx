@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
-import { Button, TextInput, Title, Paragraph, HelperText, IconButton } from 'react-native-paper';
+import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch } from 'react-native-paper';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -34,6 +34,7 @@ const recipeFormSchema = z.object({
   ),
   ingredients: z.array(ingredientSchema).min(1, "At least one ingredient is required"),
   steps: z.array(z.object({ value: z.string().min(5, "Step must be at least 5 characters") })).min(1, "At least one step is required"),
+  isPublic: z.boolean(),
 });
 
 // Infer TypeScript type from Zod schema
@@ -45,6 +46,7 @@ const CreateRecipeScreen: React.FC = () => {
     defaultValues: {
       name: '',
       description: '',
+      isPublic: false,
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
     },
@@ -67,7 +69,6 @@ const CreateRecipeScreen: React.FC = () => {
         steps: data.steps.map(step => step.value),
         category: 'main-course', // Placeholder
         difficulty: 'medium',   // Placeholder
-        isPublic: false,        // Placeholder
         tags: [],               // Placeholder
       };
 
@@ -123,6 +124,16 @@ const CreateRecipeScreen: React.FC = () => {
       />
       {errors.description && <HelperText type="error">{errors.description.message}</HelperText>}
 
+      <View style={[styles.row, { alignItems: 'center', marginBottom: 8 }]}>
+        <Paragraph style={{ fontSize: 16 }}>Make Recipe Public</Paragraph>
+        <Controller
+          name="isPublic"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Switch value={value} onValueChange={onChange} />
+          )}
+        />
+      </View>
 
       <Paragraph style={styles.subtitle}>Timings & Servings</Paragraph>
       <View style={styles.row}>
