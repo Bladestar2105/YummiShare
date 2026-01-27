@@ -34,7 +34,7 @@ const RecipesScreen: React.FC = () => {
   );
 
   const renderRecipe = ({ item }: { item: Recipe }) => (
-    <Card style={styles.card} onPress={() => console.log("Navigate to", item.id)}>
+    <Card style={styles.card} onPress={() => navigation.navigate('RecipeDetail', { recipeId: item.id })}>
       <Card.Content>
         <Title>{item.name}</Title>
         <Paragraph numberOfLines={2}>{item.description}</Paragraph>

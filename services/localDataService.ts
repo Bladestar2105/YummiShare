@@ -37,9 +37,15 @@ const setRecipes = async (recipes: Recipe[]): Promise<void> => {
 export const saveRecipe = async (formData: RecipeFormData): Promise<Recipe> => {
   const allRecipes = await getRecipes();
 
+  const ingredientsWithIds = formData.ingredients.map(ingredient => ({
+    ...ingredient,
+    id: uuidv4(),
+  }));
+
   const newRecipe: Recipe = {
     ...formData,
     id: uuidv4(),
+    ingredients: ingredientsWithIds,
     totalTime: formData.prepTime + formData.cookTime,
     isFavorite: false,
     rating: 0,

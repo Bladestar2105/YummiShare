@@ -64,6 +64,7 @@ const CreateRecipeScreen: React.FC = () => {
     try {
       const recipeData: RecipeFormData = {
         ...data,
+        steps: data.steps.map(step => step.value),
         category: 'main-course', // Placeholder
         difficulty: 'medium',   // Placeholder
         isPublic: false,        // Placeholder
