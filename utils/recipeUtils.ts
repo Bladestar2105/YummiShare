@@ -94,14 +94,10 @@ export const searchByIngredients = (
   )
   
   return recipes.filter(recipe => {
-    const recipeIngredients = recipe.ingredients.map(ing => 
-      ing.name.toLowerCase()
-    )
-    
     // Check if all search ingredients are in the recipe
     return lowerSearchIngredients.every(searchIng =>
-      recipeIngredients.some(recipeIng =>
-        recipeIng.includes(searchIng)
+      recipe.ingredients.some(recipeIng =>
+        recipeIng.name.toLowerCase().includes(searchIng)
       )
     )
   })
