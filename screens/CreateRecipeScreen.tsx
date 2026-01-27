@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
-import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Menu, TouchableRipple } from 'react-native-paper';
+import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Chip } from 'react-native-paper';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -38,15 +38,14 @@ const recipeFormSchema = z.object({
   ),
   ingredients: z.array(ingredientSchema).min(1, "At least one ingredient is required"),
   steps: z.array(z.object({ value: z.string().min(5, "Step must be at least 5 characters") })).min(1, "At least one step is required"),
+  tags: z.array(z.object({ value: z.string().min(1) })).optional(),
 });
 
 // Infer TypeScript type from Zod schema
 type FormValues = z.infer<typeof recipeFormSchema>;
 
 const CreateRecipeScreen: React.FC = () => {
-  const [menuVisible, setMenuVisible] = React.useState(false);
-  const openMenu = () => setMenuVisible(true);
-  const closeMenu = () => setMenuVisible(false);
+  const [currentTag, setCurrentTag] = useState('');
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({
     resolver: zodResolver(recipeFormSchema),
@@ -56,6 +55,7 @@ const CreateRecipeScreen: React.FC = () => {
       category: 'main-course',
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
+      tags: [],
     },
   });
 
@@ -69,14 +69,32 @@ const CreateRecipeScreen: React.FC = () => {
     name: "steps"
   });
 
+  const { fields: tagFields, append: appendTag, remove: removeTag } = useFieldArray({
+    control,
+    name: "tags"
+  });
+
+  const handleAddTag = () => {
+    if (currentTag.trim()) {
+      const exists = tagFields.some(tag => tag.value.toLowerCase() === currentTag.trim().toLowerCase());
+      if (!exists) {
+        appendTag({ value: currentTag.trim() });
+        setCurrentTag('');
+      } else {
+        Alert.alert("Duplicate Tag", "This tag has already been added.");
+      }
+    }
+  };
+
   const onSubmit = async (data: FormValues) => {
     try {
       const recipeData: RecipeFormData = {
         ...data,
         steps: data.steps.map(step => step.value),
+        tags: data.tags ? data.tags.map(tag => tag.value) : [],
+        category: 'main-course', // Placeholder
         difficulty: 'medium',   // Placeholder
         isPublic: false,        // Placeholder
-        tags: [],               // Placeholder
       };
 
       await saveRecipe(recipeData);
@@ -220,6 +238,26 @@ const CreateRecipeScreen: React.FC = () => {
         Add Step
       </Button>
 
+      <Paragraph style={styles.subtitle}>Tags</Paragraph>
+      <View style={styles.tagInputContainer}>
+        <TextInput
+            label="Add Tag"
+            mode="outlined"
+            style={styles.tagInput}
+            value={currentTag}
+            onChangeText={setCurrentTag}
+            onSubmitEditing={handleAddTag}
+            right={<TextInput.Icon icon="plus" onPress={handleAddTag} />}
+        />
+      </View>
+      <View style={styles.tagsContainer}>
+        {tagFields.map((tag, index) => (
+            <Chip key={tag.id} onClose={() => removeTag(index)} style={styles.chip}>
+                {tag.value}
+            </Chip>
+        ))}
+      </View>
+
       <Button mode="contained" style={styles.submitButton} onPress={handleSubmit(onSubmit)}>
         Save Recipe
       </Button>
@@ -240,6 +278,10 @@ const styles = StyleSheet.create({
   largeInput: { flex: 0.5 },
   fullInput: { flex: 1 },
   addButton: { marginTop: 8, marginBottom: 16 },
+  tagInputContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  tagInput: { flex: 1 },
+  tagsContainer: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 16 },
+  chip: { margin: 4 },
   submitButton: { marginTop: 24, paddingVertical: 8, marginBottom: 48 },
 });
 
