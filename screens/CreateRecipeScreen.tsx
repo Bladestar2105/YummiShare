@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
 import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch } from 'react-native-paper';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
@@ -6,32 +6,37 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { RecipeFormData } from '../types';
 import { saveRecipe } from '../services/localDataService';
+import { CATEGORIES, getCategoryName } from '../config/categories';
 
 // Zod Schema for Validation
 const ingredientSchema = z.object({
   name: z.string().min(1, "Name is required"),
   amount: z.preprocess(
     (val) => parseFloat(String(val)),
-    z.number({ invalid_type_error: "Must be a number" }).positive("Must be > 0")
+    z.number().positive("Must be > 0")
   ),
   unit: z.string().min(1, "Unit is required"),
 });
 
+const categoryIds = CATEGORIES.map((c) => c.id) as [string, ...string[]];
+
 const recipeFormSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
+  category: z.enum(categoryIds),
   prepTime: z.preprocess(
     (val) => parseInt(String(val), 10),
-    z.number({ invalid_type_error: "Must be a number" }).positive("Must be > 0")
+    z.number().positive("Must be > 0")
   ),
   cookTime: z.preprocess(
     (val) => parseInt(String(val), 10),
-    z.number({ invalid_type_error: "Must be a number" }).positive("Must be > 0")
+    z.number().positive("Must be > 0")
   ),
   servings: z.preprocess(
     (val) => parseInt(String(val), 10),
-    z.number({ invalid_type_error: "Must be a number" }).positive("Must be > 0")
+    z.number().positive("Must be > 0")
   ),
+  difficulty: z.enum(['easy', 'medium', 'hard']),
   ingredients: z.array(ingredientSchema).min(1, "At least one ingredient is required"),
   steps: z.array(z.object({ value: z.string().min(5, "Step must be at least 5 characters") })).min(1, "At least one step is required"),
   isPublic: z.boolean(),
@@ -41,6 +46,8 @@ const recipeFormSchema = z.object({
 type FormValues = z.infer<typeof recipeFormSchema>;
 
 const CreateRecipeScreen: React.FC = () => {
+  const [currentTag, setCurrentTag] = useState('');
+
   const { control, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({
     resolver: zodResolver(recipeFormSchema),
     defaultValues: {
@@ -49,6 +56,7 @@ const CreateRecipeScreen: React.FC = () => {
       isPublic: false,
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
+      tags: [],
     },
   });
 
@@ -62,11 +70,29 @@ const CreateRecipeScreen: React.FC = () => {
     name: "steps"
   });
 
+  const { fields: tagFields, append: appendTag, remove: removeTag } = useFieldArray({
+    control,
+    name: "tags"
+  });
+
+  const handleAddTag = () => {
+    if (currentTag.trim()) {
+      const exists = tagFields.some(tag => tag.value.toLowerCase() === currentTag.trim().toLowerCase());
+      if (!exists) {
+        appendTag({ value: currentTag.trim() });
+        setCurrentTag('');
+      } else {
+        Alert.alert("Duplicate Tag", "This tag has already been added.");
+      }
+    }
+  };
+
   const onSubmit = async (data: FormValues) => {
     try {
       const recipeData: RecipeFormData = {
         ...data,
         steps: data.steps.map(step => step.value),
+        tags: data.tags ? data.tags.map(tag => tag.value) : [],
         category: 'main-course', // Placeholder
         difficulty: 'medium',   // Placeholder
         tags: [],               // Placeholder
@@ -155,6 +181,23 @@ const CreateRecipeScreen: React.FC = () => {
         )} />
         {errors.servings && <HelperText type="error">{errors.servings.message}</HelperText>}
 
+      <Paragraph style={styles.subtitle}>Difficulty</Paragraph>
+      <Controller
+        name="difficulty"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <SegmentedButtons
+            value={value}
+            onValueChange={onChange}
+            buttons={[
+              { value: 'easy', label: 'Easy' },
+              { value: 'medium', label: 'Medium' },
+              { value: 'hard', label: 'Hard' },
+            ]}
+          />
+        )}
+      />
+
       <Paragraph style={styles.subtitle}>Ingredients</Paragraph>
       {ingredientFields.map((item, index) => (
         <View key={item.id} style={styles.fieldArrayRow}>
@@ -189,6 +232,26 @@ const CreateRecipeScreen: React.FC = () => {
         Add Step
       </Button>
 
+      <Paragraph style={styles.subtitle}>Tags</Paragraph>
+      <View style={styles.tagInputContainer}>
+        <TextInput
+            label="Add Tag"
+            mode="outlined"
+            style={styles.tagInput}
+            value={currentTag}
+            onChangeText={setCurrentTag}
+            onSubmitEditing={handleAddTag}
+            right={<TextInput.Icon icon="plus" onPress={handleAddTag} />}
+        />
+      </View>
+      <View style={styles.tagsContainer}>
+        {tagFields.map((tag, index) => (
+            <Chip key={tag.id} onClose={() => removeTag(index)} style={styles.chip}>
+                {tag.value}
+            </Chip>
+        ))}
+      </View>
+
       <Button mode="contained" style={styles.submitButton} onPress={handleSubmit(onSubmit)}>
         Save Recipe
       </Button>
@@ -209,6 +272,10 @@ const styles = StyleSheet.create({
   largeInput: { flex: 0.5 },
   fullInput: { flex: 1 },
   addButton: { marginTop: 8, marginBottom: 16 },
+  tagInputContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  tagInput: { flex: 1 },
+  tagsContainer: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 16 },
+  chip: { margin: 4 },
   submitButton: { marginTop: 24, paddingVertical: 8, marginBottom: 48 },
 });
 

@@ -1,5 +1,5 @@
 import { Recipe, Ingredient } from '../types'
-import { DEFAULT_RECIPE_VALUES } from '../config/firebase'
+import { DEFAULT_RECIPE_VALUES } from '../config/appConfig'
 
 /**
  * Calculate total time (prep + cook)
@@ -55,29 +55,32 @@ export const formatDuration = (minutes: number): string => {
  * Generate recipe share text
  */
 export const generateRecipeShareText = (recipe: Recipe): string => {
-  let text = `🍽️ ${recipe.name}\n\n`
-  text += `${recipe.description}\n\n`
-  
-  text += `⏱️ Zubereitung: ${formatDuration(recipe.prepTime + recipe.cookTime)}\n`
-  text += `👥 Portionen: ${recipe.servings}\n`
-  
+  const parts: string[] = [
+    `🍽️ ${recipe.name}`,
+    '',
+    recipe.description,
+    '',
+    `⏱️ Zubereitung: ${formatDuration(recipe.prepTime + recipe.cookTime)}`,
+    `👥 Portionen: ${recipe.servings}`
+  ]
+
   if (recipe.ingredients.length > 0) {
-    text += `\n📝 Zutaten:\n`
-    recipe.ingredients.forEach((ing, index) => {
-      text += `• ${ing.amount} ${ing.unit} ${ing.name}\n`
-    })
+    parts.push('', '📝 Zutaten:')
+    for (const ing of recipe.ingredients) {
+      parts.push(`• ${ing.amount} ${ing.unit} ${ing.name}`)
+    }
   }
-  
+
   if (recipe.steps.length > 0) {
-    text += `\n👨‍🍳 Zubereitung:\n`
-    recipe.steps.forEach((step, index) => {
-      text += `${index + 1}. ${step}\n`
-    })
+    parts.push('', '👨‍🍳 Zubereitung:')
+    for (let i = 0; i < recipe.steps.length; i++) {
+      parts.push(`${i + 1}. ${recipe.steps[i]}`)
+    }
   }
-  
-  text += `\nGuten Appetit! 🍴`
-  
-  return text
+
+  parts.push('', 'Guten Appetit! 🍴')
+
+  return parts.join('\n')
 }
 
 /**
@@ -159,7 +162,7 @@ export const filterByMaxTime = (
   if (!maxMinutes) return recipes
   
   return recipes.filter(recipe => 
-    (recipe.prepTime + recipe.cookTime) <= maxMinutes
+    recipe.totalTime <= maxMinutes
   )
 }
 
@@ -191,7 +194,7 @@ export const sortRecipes = (
     
     case 'quick':
       return sorted.sort((a, b) => 
-        (a.prepTime + a.cookTime) - (b.prepTime + b.cookTime)
+        a.totalTime - b.totalTime
       )
     
     default:
