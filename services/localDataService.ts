@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Recipe, RecipeFormData } from '../types';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import { getUserId } from './userService';
 
 
 const RECIPES_KEY = 'recipes';
@@ -52,7 +53,7 @@ export const saveRecipe = async (formData: RecipeFormData): Promise<Recipe> => {
     reviewCount: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
-    userId: 'local-user', // Placeholder for local storage
+    userId: await getUserId(),
     defaultServings: formData.servings,
   };
 
