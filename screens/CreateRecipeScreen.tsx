@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
-import { Button, TextInput, Title, Paragraph, HelperText, IconButton, SegmentedButtons } from 'react-native-paper';
+import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch } from 'react-native-paper';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -39,7 +39,7 @@ const recipeFormSchema = z.object({
   difficulty: z.enum(['easy', 'medium', 'hard']),
   ingredients: z.array(ingredientSchema).min(1, "At least one ingredient is required"),
   steps: z.array(z.object({ value: z.string().min(5, "Step must be at least 5 characters") })).min(1, "At least one step is required"),
-  tags: z.array(z.object({ value: z.string().min(1) })).optional(),
+  isPublic: z.boolean(),
 });
 
 // Infer TypeScript type from Zod schema
@@ -53,7 +53,7 @@ const CreateRecipeScreen: React.FC = () => {
     defaultValues: {
       name: '',
       description: '',
-      difficulty: 'medium',
+      isPublic: false,
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
       tags: [],
@@ -94,7 +94,8 @@ const CreateRecipeScreen: React.FC = () => {
         steps: data.steps.map(step => step.value),
         tags: data.tags ? data.tags.map(tag => tag.value) : [],
         category: 'main-course', // Placeholder
-        isPublic: false,        // Placeholder
+        difficulty: 'medium',   // Placeholder
+        tags: [],               // Placeholder
       };
 
       await saveRecipe(recipeData);
@@ -149,40 +150,16 @@ const CreateRecipeScreen: React.FC = () => {
       />
       {errors.description && <HelperText type="error">{errors.description.message}</HelperText>}
 
-      <Controller
-        name="category"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <View style={styles.input}>
-            <Menu
-              visible={menuVisible}
-              onDismiss={closeMenu}
-              anchor={
-                <TouchableRipple onPress={openMenu}>
-                  <TextInput
-                    label="Category"
-                    mode="outlined"
-                    value={getCategoryName(value as any)}
-                    editable={false}
-                    right={<TextInput.Icon icon="menu-down" />}
-                  />
-                </TouchableRipple>
-              }
-            >
-              {CATEGORIES.map((cat) => (
-                <Menu.Item
-                  key={cat.id}
-                  onPress={() => {
-                    onChange(cat.id);
-                    closeMenu();
-                  }}
-                  title={`${cat.icon} ${cat.name}`}
-                />
-              ))}
-            </Menu>
-          </View>
-        )}
-      />
+      <View style={[styles.row, { alignItems: 'center', marginBottom: 8 }]}>
+        <Paragraph style={{ fontSize: 16 }}>Make Recipe Public</Paragraph>
+        <Controller
+          name="isPublic"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Switch value={value} onValueChange={onChange} />
+          )}
+        />
+      </View>
 
       <Paragraph style={styles.subtitle}>Timings & Servings</Paragraph>
       <View style={styles.row}>
