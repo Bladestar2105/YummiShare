@@ -13,7 +13,7 @@ const ListEmptyComponent = () => (
   </View>
 );
 
-const RecipeItem = memo(({ item }: { item: Recipe }) => {
+const RecipeItem = React.memo(({ item }: { item: Recipe }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
