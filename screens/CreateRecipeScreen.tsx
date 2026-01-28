@@ -58,13 +58,9 @@ const CreateRecipeScreen: React.FC = () => {
       category: 'main-course',
       difficulty: 'medium',
       isPublic: false,
-      category: 'main-course',
-      difficulty: 'medium',
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
       tags: [],
-      category: 'main-course',
-      difficulty: 'medium',
     },
   });
 
@@ -192,29 +188,6 @@ const CreateRecipeScreen: React.FC = () => {
           )}
         />
       </View>
-
-      <Paragraph style={styles.subtitle}>Category</Paragraph>
-      <Controller
-        name="category"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryContainer}>
-             {CATEGORIES.map((cat) => (
-                <Chip
-                    key={cat.id}
-                    selected={value === cat.id}
-                    onPress={() => onChange(cat.id)}
-                    style={styles.categoryChip}
-                    showSelectedOverlay
-                >
-                    {cat.icon} {cat.name}
-                </Chip>
-             ))}
-          </ScrollView>
-        )}
-      />
-      {errors.category && <HelperText type="error">{errors.category.message}</HelperText>}
-
 
       <Paragraph style={styles.subtitle}>Timings & Servings</Paragraph>
       <View style={styles.row}>
