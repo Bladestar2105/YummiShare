@@ -3,6 +3,11 @@ Starting Metro Bundler
 Waiting on http://localhost:8081
 Logs for your project will appear below.
 Web ./index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
+Web ./index.ts ▓▓▓▓▓▓▓▓▓░░░░░░░ 58.6% ( 78/171)
+Web ./index.ts ▓▓▓▓▓▓▓▓▓░░░░░░░ 58.6% (252/465)
+Web ./index.ts ▓▓▓▓▓▓▓▓▓░░░░░░░ 62.4% (485/614)
+Web ./index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 93.7% (852/880)
+Web Bundled 14669ms index.ts (905 modules)
 Web ./index.ts ▓▓▓▓▓▓▓▓▓░░░░░░░ 60.7% (142/317)
 Web ./index.ts ▓▓▓▓▓▓▓▓▓░░░░░░░ 60.7% (397/566)
 Web ./index.ts ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 86.0% (816/880)
