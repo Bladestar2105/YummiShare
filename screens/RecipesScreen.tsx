@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { FAB, Card, Title, Paragraph, ActivityIndicator, Text } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -12,6 +12,21 @@ const ListEmptyComponent = () => (
     <Text style={styles.emptySubtext}>Tap the '+' button to create your first one!</Text>
   </View>
 );
+
+const RecipeItem = memo(({ item }: { item: Recipe }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  return (
+    <Card style={styles.card} onPress={() => navigation.navigate('RecipeDetail', { recipeId: item.id })}>
+      <Card.Content>
+        <Title>{item.name}</Title>
+        <Paragraph numberOfLines={2}>{item.description}</Paragraph>
+      </Card.Content>
+    </Card>
+  );
+});
+
+const renderRecipe = ({ item }: { item: Recipe }) => <RecipeItem item={item} />;
 
 const RecipesScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -40,15 +55,6 @@ const RecipesScreen: React.FC = () => {
       return () => {};
     }, [])
   );
-
-  const renderRecipe = useCallback(({ item }: { item: Recipe }) => (
-    <Card style={styles.card} onPress={() => navigation.navigate('RecipeDetail', { recipeId: item.id })}>
-      <Card.Content>
-        <Title>{item.name}</Title>
-        <Paragraph numberOfLines={2}>{item.description}</Paragraph>
-      </Card.Content>
-    </Card>
-  ), [navigation]);
 
   if (isLoading) {
     return <ActivityIndicator animating={true} size="large" style={styles.loader} />;
