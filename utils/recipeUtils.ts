@@ -55,8 +55,6 @@ export const formatDuration = (minutes: number): string => {
  * Generate recipe share text
  */
 export const generateRecipeShareText = (recipe: Recipe): string => {
-  const totalTime = recipe.prepTime + recipe.cookTime
-
   const parts: string[] = [
     `🍽️ ${recipe.name}`,
     '',
@@ -68,16 +66,12 @@ export const generateRecipeShareText = (recipe: Recipe): string => {
 
   if (recipe.ingredients.length > 0) {
     parts.push('', '📝 Zutaten:')
-    for (const ing of recipe.ingredients) {
-      parts.push(`• ${ing.amount} ${ing.unit} ${ing.name}`)
-    }
+    parts.push(...recipe.ingredients.map(ing => `• ${ing.amount} ${ing.unit} ${ing.name}`))
   }
 
   if (recipe.steps.length > 0) {
     parts.push('', '👨‍🍳 Zubereitung:')
-    for (let i = 0; i < recipe.steps.length; i++) {
-      parts.push(`${i + 1}. ${recipe.steps[i]}`)
-    }
+    parts.push(...recipe.steps.map((step, i) => `${i + 1}. ${step}`))
   }
 
   parts.push('', 'Guten Appetit! 🍴')
