@@ -13,6 +13,21 @@ const ListEmptyComponent = () => (
   </View>
 );
 
+const RecipeItem = React.memo(({ item }: { item: Recipe }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  return (
+    <Card style={styles.card} onPress={() => navigation.navigate('RecipeDetail', { recipeId: item.id })}>
+      <Card.Content>
+        <Title>{item.name}</Title>
+        <Paragraph numberOfLines={2}>{item.description}</Paragraph>
+      </Card.Content>
+    </Card>
+  );
+});
+
+const renderRecipe = ({ item }: { item: Recipe }) => <RecipeItem item={item} />;
+
 const RecipesScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -40,15 +55,6 @@ const RecipesScreen: React.FC = () => {
       return () => {};
     }, [])
   );
-
-  const renderRecipe = useCallback(({ item }: { item: Recipe }) => (
-    <Card style={styles.card} onPress={() => navigation.navigate('RecipeDetail', { recipeId: item.id })}>
-      <Card.Content>
-        <Title>{item.name}</Title>
-        <Paragraph numberOfLines={2}>{item.description}</Paragraph>
-      </Card.Content>
-    </Card>
-  ), [navigation]);
 
   if (isLoading) {
     return <ActivityIndicator animating={true} size="large" style={styles.loader} />;
