@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
-import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch, Chip, SegmentedButtons } from 'react-native-paper';
+import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch, SegmentedButtons, Chip } from 'react-native-paper';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -54,6 +54,7 @@ const CreateRecipeScreen: React.FC = () => {
     defaultValues: {
       name: '',
       description: '',
+      difficulty: 'medium',
       isPublic: false,
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
@@ -94,7 +95,8 @@ const CreateRecipeScreen: React.FC = () => {
         ...data,
         category: data.category as any, // Cast to any to avoid TS mismatch with string/Category
         steps: data.steps.map(step => step.value),
-        tags: data.tags.map(tag => tag.value),
+        tags: data.tags ? data.tags.map(tag => tag.value) : [],
+        category: 'main-course', // Placeholder
       };
 
       await saveRecipe(recipeData);
