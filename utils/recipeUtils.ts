@@ -86,6 +86,13 @@ export const generateRecipeShareText = (recipe: Recipe): string => {
 }
 
 /**
+ * Helper to escape special characters in regex
+ */
+const escapeRegExp = (string: string): string => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+/**
  * Search recipes by ingredients
  */
 export const searchByIngredients = (
@@ -94,15 +101,17 @@ export const searchByIngredients = (
 ): Recipe[] => {
   if (searchIngredients.length === 0) return recipes
   
-  const lowerSearchIngredients = searchIngredients.map(ing => 
-    ing.toLowerCase().trim()
+  // Create regex patterns for each search ingredient once
+  // This avoids creating new strings via toLowerCase() inside the loop
+  const searchPatterns = searchIngredients.map(ing =>
+    new RegExp(escapeRegExp(ing.trim()), 'i')
   )
   
   return recipes.filter(recipe => {
     // Check if all search ingredients are in the recipe
-    return lowerSearchIngredients.every(searchIng =>
+    return searchPatterns.every(pattern =>
       recipe.ingredients.some(recipeIng =>
-        recipeIng.name.toLowerCase().includes(searchIng)
+        pattern.test(recipeIng.name)
       )
     )
   })

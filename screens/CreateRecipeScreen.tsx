@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
-import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch, Menu, TouchableRipple, Divider, SegmentedButtons, Chip } from 'react-native-paper';
+import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch, SegmentedButtons, Chip, Menu, TouchableRipple } from 'react-native-paper';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { RecipeFormData, Category } from '../types';
+import { RecipeFormData, Category, Difficulty } from '../types';
 import { saveRecipe } from '../services/localDataService';
 import { CATEGORIES, getCategoryName } from '../config/categories';
 
@@ -103,6 +103,7 @@ const CreateRecipeScreen: React.FC = () => {
       const recipeData: RecipeFormData = {
         ...data,
         category: data.category as Category,
+        difficulty: data.difficulty as Difficulty,
         steps: data.steps.map(step => step.value),
         tags: data.tags ? data.tags.map(tag => tag.value) : [],
       };
@@ -164,39 +165,22 @@ const CreateRecipeScreen: React.FC = () => {
         name="category"
         control={control}
         render={({ field: { onChange, value } }) => (
-          <View>
-            <Menu
-              visible={categoryMenuVisible}
-              onDismiss={closeCategoryMenu}
-              anchor={
-                <TouchableRipple onPress={openCategoryMenu}>
-                  <TextInput
-                    label="Category"
-                    mode="outlined"
-                    value={getCategoryName(value as Category)}
-                    editable={false}
-                    right={<TextInput.Icon icon="menu-down" onPress={openCategoryMenu} />}
-                    style={styles.input}
-                    error={!!errors.category}
-                  />
-                </TouchableRipple>
-              }
-            >
-              {CATEGORIES.map((category) => (
-                <Menu.Item
-                  key={category.id}
-                  onPress={() => {
-                    onChange(category.id);
-                    closeCategoryMenu();
-                  }}
-                  title={category.name}
-                />
-              ))}
-            </Menu>
-            {errors.category && <HelperText type="error">{errors.category.message}</HelperText>}
-          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryContainer}>
+             {CATEGORIES.map((cat) => (
+                <Chip
+                    key={cat.id}
+                    selected={value === cat.id}
+                    onPress={() => onChange(cat.id)}
+                    style={styles.categoryChip}
+                    showSelectedOverlay
+                >
+                    {cat.icon} {cat.name}
+                </Chip>
+             ))}
+          </ScrollView>
         )}
       />
+      {errors.category && <HelperText type="error">{errors.category.message}</HelperText>}
 
       <View style={[styles.row, { alignItems: 'center', marginBottom: 8 }]}>
         <Paragraph style={{ fontSize: 16 }}>Make Recipe Public</Paragraph>
