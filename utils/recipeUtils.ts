@@ -192,6 +192,7 @@ export const sortRecipes = (
     
     case 'quick':
       return sorted.sort((a, b) => 
+        // Optimization: Use pre-calculated totalTime
         a.totalTime - b.totalTime
       )
     

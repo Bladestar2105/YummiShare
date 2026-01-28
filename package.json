@@ -7,7 +7,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "echo \"No tests specified\" && exit 0"
+    "test": "echo \"No test suite available\" && exit 0"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

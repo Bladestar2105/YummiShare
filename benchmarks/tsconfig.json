@@ -1,20 +1,20 @@
 {
   "compilerOptions": {
-    "target": "es2020",
     "module": "commonjs",
+    "target": "es2019",
+    "lib": ["es2019", "dom"],
+    "noEmit": false,
     "outDir": "./dist",
-    "strict": true,
-    "esModuleInterop": true,
+    "rootDir": "..",
     "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "*": ["node_modules/*"]
-    }
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true
   },
   "include": [
-    "**/*.ts",
-    "../utils/**/*.ts",
-    "../types/**/*.ts",
-    "../config/**/*.ts"
+    "./**/*",
+    "../utils/**/*",
+    "../types/**/*",
+    "../config/**/*"
   ]
 }

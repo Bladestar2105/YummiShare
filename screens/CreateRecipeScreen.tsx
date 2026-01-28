@@ -101,6 +101,7 @@ const CreateRecipeScreen: React.FC = () => {
         steps: data.steps.map(step => step.value),
         tags: data.tags ? data.tags.map(tag => tag.value) : [],
         category: 'main-course', // Placeholder
+        difficulty: 'medium',   // Placeholder
       };
 
       await saveRecipe(recipeData);
