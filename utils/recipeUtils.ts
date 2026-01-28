@@ -60,7 +60,7 @@ export const generateRecipeShareText = (recipe: Recipe): string => {
     '',
     recipe.description,
     '',
-    `⏱️ Zubereitung: ${formatDuration(recipe.prepTime + recipe.cookTime)}`,
+    `⏱️ Zubereitung: ${formatDuration(recipe.totalTime)}`,
     `👥 Portionen: ${recipe.servings}`
   ]
 
