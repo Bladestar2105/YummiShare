@@ -34,7 +34,7 @@ describe('CreateRecipeScreen', () => {
   it('renders correctly and allows submitting the form', async () => {
     (saveRecipe as jest.Mock).mockResolvedValue({});
 
-    const { getByText, getByLabelText, getAllByText } = renderWithProviders(<CreateRecipeScreen />);
+    const { getByText, getByLabelText } = renderWithProviders(<CreateRecipeScreen />);
 
     // Check if title exists
     expect(getByText('Create a New Recipe')).toBeTruthy();

@@ -16,8 +16,12 @@ const ListEmptyComponent = () => (
 const RecipeItem = React.memo(({ item }: { item: Recipe }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
+  const handlePress = useCallback(() => {
+    navigation.navigate('RecipeDetail', { recipeId: item.id });
+  }, [navigation, item.id]);
+
   return (
-    <Card style={styles.card} onPress={() => navigation.navigate('RecipeDetail', { recipeId: item.id })}>
+    <Card style={styles.card} onPress={handlePress}>
       <Card.Content>
         <Title>{item.name}</Title>
         <Paragraph numberOfLines={2}>{item.description}</Paragraph>
@@ -27,6 +31,8 @@ const RecipeItem = React.memo(({ item }: { item: Recipe }) => {
 });
 
 const renderRecipe = ({ item }: { item: Recipe }) => <RecipeItem item={item} />;
+
+const keyExtractor = (item: Recipe) => item.id;
 
 const RecipesScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -56,6 +62,10 @@ const RecipesScreen: React.FC = () => {
     }, [])
   );
 
+  const handleCreateRecipe = useCallback(() => {
+    navigation.navigate('CreateRecipe');
+  }, [navigation]);
+
   if (isLoading) {
     return <ActivityIndicator animating={true} size="large" style={styles.loader} />;
   }
@@ -65,14 +75,14 @@ const RecipesScreen: React.FC = () => {
       <FlatList
         data={recipes}
         renderItem={renderRecipe}
-        keyExtractor={(item) => item.id}
+        keyExtractor={keyExtractor}
         contentContainerStyle={styles.list}
         ListEmptyComponent={ListEmptyComponent}
       />
       <FAB
         style={styles.fab}
         icon="plus"
-        onPress={() => navigation.navigate('CreateRecipe')}
+        onPress={handleCreateRecipe}
       />
     </View>
   );
