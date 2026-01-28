@@ -60,7 +60,7 @@ export const generateRecipeShareText = (recipe: Recipe): string => {
     '',
     recipe.description,
     '',
-    `⏱️ Zubereitung: ${formatDuration(recipe.prepTime + recipe.cookTime)}`,
+    `⏱️ Zubereitung: ${formatDuration(recipe.totalTime)}`,
     `👥 Portionen: ${recipe.servings}`
   ]
 
@@ -157,9 +157,9 @@ export const filterByMaxTime = (
 ): Recipe[] => {
   if (!maxMinutes) return recipes
   
-  return recipes.filter(recipe => 
-    recipe.totalTime <= maxMinutes
-  )
+  return recipes.filter(recipe => {
+    return recipe.totalTime <= maxMinutes
+  })
 }
 
 /**
