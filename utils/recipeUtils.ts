@@ -170,10 +170,13 @@ export const filterByMaxTime = (
 ): Recipe[] => {
   if (!maxMinutes) return recipes
   
-  return recipes.filter(recipe => {
-    // Optimization: Use pre-calculated totalTime
-    return recipe.totalTime <= maxMinutes
-  })
+  const result: Recipe[] = []
+  for (let i = 0; i < recipes.length; i++) {
+    if (recipes[i].totalTime <= maxMinutes) {
+      result.push(recipes[i])
+    }
+  }
+  return result
 }
 
 /**

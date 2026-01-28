@@ -1,9 +1,11 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
-    "noEmit": false,
-    "types": ["node"]
+    "target": "es2017",
+    "esModuleInterop": true,
+    "strict": true,
+    "types": ["node"],
+    "noEmit": false
   }
 }
