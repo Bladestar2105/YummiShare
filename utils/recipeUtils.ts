@@ -55,12 +55,14 @@ export const formatDuration = (minutes: number): string => {
  * Generate recipe share text
  */
 export const generateRecipeShareText = (recipe: Recipe): string => {
+  const totalTime = recipe.prepTime + recipe.cookTime
+
   const parts: string[] = [
     `🍽️ ${recipe.name}`,
     '',
     recipe.description,
     '',
-    `⏱️ Zubereitung: ${formatDuration(recipe.prepTime + recipe.cookTime)}`,
+    `⏱️ Zubereitung: ${formatDuration(totalTime)}`,
     `👥 Portionen: ${recipe.servings}`
   ]
 
