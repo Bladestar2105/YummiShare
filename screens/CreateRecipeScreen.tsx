@@ -50,13 +50,15 @@ const CreateRecipeScreen: React.FC = () => {
   const [currentTag, setCurrentTag] = useState('');
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({
-    resolver: zodResolver(recipeFormSchema),
+    resolver: zodResolver(recipeFormSchema) as any,
     defaultValues: {
       name: '',
       description: '',
       category: 'main-course',
       difficulty: 'medium',
       isPublic: false,
+      category: 'main-course',
+      difficulty: 'medium',
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
       tags: [],
@@ -94,6 +96,7 @@ const CreateRecipeScreen: React.FC = () => {
     try {
       const recipeData: RecipeFormData = {
         ...data,
+        category: data.category as any, // Cast to any to avoid TS mismatch with string/Category
         steps: data.steps.map(step => step.value),
         tags: data.tags ? data.tags.map(tag => tag.value) : [],
         category: 'main-course', // Placeholder
@@ -161,6 +164,29 @@ const CreateRecipeScreen: React.FC = () => {
           )}
         />
       </View>
+
+      <Paragraph style={styles.subtitle}>Category</Paragraph>
+      <Controller
+        name="category"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryContainer}>
+             {CATEGORIES.map((cat) => (
+                <Chip
+                    key={cat.id}
+                    selected={value === cat.id}
+                    onPress={() => onChange(cat.id)}
+                    style={styles.categoryChip}
+                    showSelectedOverlay
+                >
+                    {cat.icon} {cat.name}
+                </Chip>
+             ))}
+          </ScrollView>
+        )}
+      />
+      {errors.category && <HelperText type="error">{errors.category.message}</HelperText>}
+
 
       <Paragraph style={styles.subtitle}>Timings & Servings</Paragraph>
       <View style={styles.row}>
@@ -254,7 +280,7 @@ const CreateRecipeScreen: React.FC = () => {
         ))}
       </View>
 
-      <Button mode="contained" style={styles.submitButton} onPress={handleSubmit(onSubmit)}>
+      <Button mode="contained" style={styles.submitButton} onPress={handleSubmit(onSubmit as any)}>
         Save Recipe
       </Button>
     </ScrollView>
@@ -279,6 +305,8 @@ const styles = StyleSheet.create({
   tagsContainer: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 16 },
   chip: { margin: 4 },
   submitButton: { marginTop: 24, paddingVertical: 8, marginBottom: 48 },
+  categoryContainer: { marginBottom: 8, flexDirection: 'row' },
+  categoryChip: { marginRight: 8, marginVertical: 4 },
 });
 
 export default CreateRecipeScreen;
