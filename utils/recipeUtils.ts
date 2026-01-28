@@ -109,11 +109,19 @@ export const searchByIngredients = (
   
   return recipes.filter(recipe => {
     // Check if all search ingredients are in the recipe
-    return searchPatterns.every(pattern =>
-      recipe.ingredients.some(recipeIng =>
-        pattern.test(recipeIng.name)
-      )
-    )
+    // Use loops to avoid closure creation overhead for every recipe/pattern combination
+    for (let i = 0; i < searchPatterns.length; i++) {
+      const pattern = searchPatterns[i]
+      let found = false
+      for (let j = 0; j < recipe.ingredients.length; j++) {
+        if (pattern.test(recipe.ingredients[j].name)) {
+          found = true
+          break
+        }
+      }
+      if (!found) return false
+    }
+    return true
   })
 }
 
