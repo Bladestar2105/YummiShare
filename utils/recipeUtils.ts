@@ -60,7 +60,7 @@ export const generateRecipeShareText = (recipe: Recipe): string => {
     '',
     recipe.description,
     '',
-    `⏱️ Zubereitung: ${formatDuration(recipe.prepTime + recipe.cookTime)}`,
+    `⏱️ Zubereitung: ${formatDuration(recipe.totalTime)}`,
     `👥 Portionen: ${recipe.servings}`
   ]
 
@@ -190,6 +190,7 @@ export const sortRecipes = (
     
     case 'quick':
       return sorted.sort((a, b) => 
+        // Optimization: Use pre-calculated totalTime
         a.totalTime - b.totalTime
       )
     
