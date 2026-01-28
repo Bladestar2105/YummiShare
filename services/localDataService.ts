@@ -98,9 +98,12 @@ export const updateRecipe = async (id: string, formData: Partial<RecipeFormData>
     }
 
     const originalRecipe = allRecipes[recipeIndex];
-    const updatedRecipe = {
+    const updatedRecipe: Recipe = {
         ...originalRecipe,
         ...formData,
+        ingredients: formData.ingredients
+            ? formData.ingredients.map(ing => ({ ...ing, id: uuidv4() }))
+            : originalRecipe.ingredients,
         updatedAt: new Date(),
     };
 
