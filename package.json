@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "test": "echo \"No test suite available\" && exit 0"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@types/react": "~19.1.0",
     "@types/uuid": "^10.0.0",
+    "babel-preset-expo": "^54.0.10",
     "typescript": "~5.9.2"
   },
   "private": true
