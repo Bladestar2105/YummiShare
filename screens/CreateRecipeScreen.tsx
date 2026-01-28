@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
-import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch } from 'react-native-paper';
+import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch, Menu, TouchableRipple, Divider, SegmentedButtons, Chip } from 'react-native-paper';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { RecipeFormData } from '../types';
+import { RecipeFormData, Category } from '../types';
 import { saveRecipe } from '../services/localDataService';
 import { CATEGORIES, getCategoryName } from '../config/categories';
 
@@ -39,6 +39,7 @@ const recipeFormSchema = z.object({
   difficulty: z.enum(['easy', 'medium', 'hard']),
   ingredients: z.array(ingredientSchema).min(1, "At least one ingredient is required"),
   steps: z.array(z.object({ value: z.string().min(5, "Step must be at least 5 characters") })).min(1, "At least one step is required"),
+  tags: z.array(z.object({ value: z.string() })).optional(),
   isPublic: z.boolean(),
 });
 
@@ -47,18 +48,24 @@ type FormValues = z.infer<typeof recipeFormSchema>;
 
 const CreateRecipeScreen: React.FC = () => {
   const [currentTag, setCurrentTag] = useState('');
+  const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({
     resolver: zodResolver(recipeFormSchema),
     defaultValues: {
       name: '',
       description: '',
+      category: 'main-course',
+      difficulty: 'medium',
       isPublic: false,
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
       tags: [],
     },
   });
+
+  const openCategoryMenu = () => setCategoryMenuVisible(true);
+  const closeCategoryMenu = () => setCategoryMenuVisible(false);
 
   const { fields: ingredientFields, append: appendIngredient, remove: removeIngredient } = useFieldArray({
     control,
@@ -91,11 +98,9 @@ const CreateRecipeScreen: React.FC = () => {
     try {
       const recipeData: RecipeFormData = {
         ...data,
+        category: data.category as Category,
         steps: data.steps.map(step => step.value),
         tags: data.tags ? data.tags.map(tag => tag.value) : [],
-        category: 'main-course', // Placeholder
-        difficulty: 'medium',   // Placeholder
-        tags: [],               // Placeholder
       };
 
       await saveRecipe(recipeData);
@@ -149,6 +154,45 @@ const CreateRecipeScreen: React.FC = () => {
         )}
       />
       {errors.description && <HelperText type="error">{errors.description.message}</HelperText>}
+
+      <Paragraph style={styles.subtitle}>Category</Paragraph>
+      <Controller
+        name="category"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <View>
+            <Menu
+              visible={categoryMenuVisible}
+              onDismiss={closeCategoryMenu}
+              anchor={
+                <TouchableRipple onPress={openCategoryMenu}>
+                  <TextInput
+                    label="Category"
+                    mode="outlined"
+                    value={getCategoryName(value as Category)}
+                    editable={false}
+                    right={<TextInput.Icon icon="menu-down" onPress={openCategoryMenu} />}
+                    style={styles.input}
+                    error={!!errors.category}
+                  />
+                </TouchableRipple>
+              }
+            >
+              {CATEGORIES.map((category) => (
+                <Menu.Item
+                  key={category.id}
+                  onPress={() => {
+                    onChange(category.id);
+                    closeCategoryMenu();
+                  }}
+                  title={category.name}
+                />
+              ))}
+            </Menu>
+            {errors.category && <HelperText type="error">{errors.category.message}</HelperText>}
+          </View>
+        )}
+      />
 
       <View style={[styles.row, { alignItems: 'center', marginBottom: 8 }]}>
         <Paragraph style={{ fontSize: 16 }}>Make Recipe Public</Paragraph>
