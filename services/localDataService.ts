@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Recipe, RecipeFormData } from '../types';
+import { Recipe, RecipeFormData, Ingredient } from '../types';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { getUserId } from './userService';
@@ -38,7 +38,7 @@ const setRecipes = async (recipes: Recipe[]): Promise<void> => {
 export const saveRecipe = async (formData: RecipeFormData): Promise<Recipe> => {
   const allRecipes = await getRecipes();
 
-  const ingredientsWithIds = formData.ingredients.map(ingredient => ({
+  const ingredientsWithIds: Ingredient[] = formData.ingredients.map(ingredient => ({
     ...ingredient,
     id: uuidv4(),
   }));
@@ -98,9 +98,19 @@ export const updateRecipe = async (id: string, formData: Partial<RecipeFormData>
     }
 
     const originalRecipe = allRecipes[recipeIndex];
-    const updatedRecipe = {
+
+    let ingredients = originalRecipe.ingredients;
+    if (formData.ingredients) {
+        ingredients = formData.ingredients.map(ingredient => ({
+            ...ingredient,
+            id: uuidv4(),
+        }));
+    }
+
+    const updatedRecipe: Recipe = {
         ...originalRecipe,
         ...formData,
+        ingredients,
         updatedAt: new Date(),
     };
 
