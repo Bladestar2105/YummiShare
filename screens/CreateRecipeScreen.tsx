@@ -100,6 +100,7 @@ const CreateRecipeScreen: React.FC = () => {
         ...data,
         category: data.category as Category,
         difficulty: data.difficulty as Difficulty,
+        isPublic: data.isPublic,
         steps: data.steps.map(step => step.value),
         tags: data.tags ? data.tags.map(tag => tag.value) : [],
       };
@@ -184,7 +185,11 @@ const CreateRecipeScreen: React.FC = () => {
           name="isPublic"
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Switch value={value} onValueChange={onChange} />
+            <Switch
+              value={value}
+              onValueChange={onChange}
+              testID="is-public-switch"
+            />
           )}
         />
       </View>
