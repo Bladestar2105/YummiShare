@@ -13,5 +13,15 @@ jest.mock('react-native-safe-area-context', () => {
     SafeAreaContext: Context,
     useSafeAreaInsets: () => inset,
     useSafeAreaFrame: () => ({ x: 0, y: 0, width: 390, height: 844 }),
+    SafeAreaProvider: jest.fn(({ children }) => children),
+    SafeAreaConsumer: jest.fn(({ children }) => children(inset)),
+    useSafeAreaInsets: jest.fn(() => inset),
+    useSafeAreaFrame: jest.fn(() => ({ x: 0, y: 0, width: 390, height: 844 })),
+    SafeAreaInsetsContext: {
+        Consumer: jest.fn(({ children }) => children(inset)),
+    },
+    SafeAreaFrameContext: {
+        Consumer: jest.fn(({ children }) => children({ x: 0, y: 0, width: 390, height: 844 })),
+    }
   };
 });

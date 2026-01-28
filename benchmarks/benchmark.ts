@@ -37,7 +37,7 @@ const runBenchmark = () => {
   console.log(`Generating ${recipeCount} recipes...`);
   const recipes = generateRecipes(recipeCount);
   const maxMinutes = 60;
-  const iterations = 50;
+  const iterations = 100;
 
   console.log(`Running benchmark (${iterations} iterations)...`);
 

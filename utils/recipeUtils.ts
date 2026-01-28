@@ -55,8 +55,6 @@ export const formatDuration = (minutes: number): string => {
  * Generate recipe share text
  */
 export const generateRecipeShareText = (recipe: Recipe): string => {
-  const totalTime = recipe.prepTime + recipe.cookTime
-
   const parts: string[] = [
     `🍽️ ${recipe.name}`,
     '',
@@ -68,16 +66,12 @@ export const generateRecipeShareText = (recipe: Recipe): string => {
 
   if (recipe.ingredients.length > 0) {
     parts.push('', '📝 Zutaten:')
-    for (const ing of recipe.ingredients) {
-      parts.push(`• ${ing.amount} ${ing.unit} ${ing.name}`)
-    }
+    parts.push(...recipe.ingredients.map(ing => `• ${ing.amount} ${ing.unit} ${ing.name}`))
   }
 
   if (recipe.steps.length > 0) {
     parts.push('', '👨‍🍳 Zubereitung:')
-    for (let i = 0; i < recipe.steps.length; i++) {
-      parts.push(`${i + 1}. ${recipe.steps[i]}`)
-    }
+    parts.push(...recipe.steps.map((step, i) => `${i + 1}. ${step}`))
   }
 
   parts.push('', 'Guten Appetit! 🍴')
@@ -109,11 +103,19 @@ export const searchByIngredients = (
   
   return recipes.filter(recipe => {
     // Check if all search ingredients are in the recipe
-    return searchPatterns.every(pattern =>
-      recipe.ingredients.some(recipeIng =>
-        pattern.test(recipeIng.name)
-      )
-    )
+    // Use loops to avoid closure creation overhead for every recipe/pattern combination
+    for (let i = 0; i < searchPatterns.length; i++) {
+      const pattern = searchPatterns[i]
+      let found = false
+      for (let j = 0; j < recipe.ingredients.length; j++) {
+        if (pattern.test(recipe.ingredients[j].name)) {
+          found = true
+          break
+        }
+      }
+      if (!found) return false
+    }
+    return true
   })
 }
 
@@ -169,6 +171,7 @@ export const filterByMaxTime = (
   if (!maxMinutes) return recipes
   
   return recipes.filter(recipe => {
+    // Optimization: Use pre-calculated totalTime
     return recipe.totalTime <= maxMinutes
   })
 }
@@ -202,6 +205,7 @@ export const sortRecipes = (
     case 'quick':
       return sorted.sort((a, b) => 
         // Optimization: Use pre-calculated totalTime
+        // Replaced dynamic calculation (prepTime + cookTime) with property access
         a.totalTime - b.totalTime
       )
     
