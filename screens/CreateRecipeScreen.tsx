@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
-import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch } from 'react-native-paper';
+import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch, Chip, SegmentedButtons } from 'react-native-paper';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -39,6 +39,7 @@ const recipeFormSchema = z.object({
   difficulty: z.enum(['easy', 'medium', 'hard']),
   ingredients: z.array(ingredientSchema).min(1, "At least one ingredient is required"),
   steps: z.array(z.object({ value: z.string().min(5, "Step must be at least 5 characters") })).min(1, "At least one step is required"),
+  tags: z.array(z.object({ value: z.string() })).default([]),
   isPublic: z.boolean(),
 });
 
@@ -57,6 +58,8 @@ const CreateRecipeScreen: React.FC = () => {
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
       tags: [],
+      category: 'main-course',
+      difficulty: 'medium',
     },
   });
 
@@ -93,9 +96,6 @@ const CreateRecipeScreen: React.FC = () => {
         ...data,
         steps: data.steps.map(step => step.value),
         tags: data.tags ? data.tags.map(tag => tag.value) : [],
-        category: 'main-course', // Placeholder
-        difficulty: 'medium',   // Placeholder
-        tags: [],               // Placeholder
       };
 
       await saveRecipe(recipeData);
