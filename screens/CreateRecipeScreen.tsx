@@ -62,6 +62,7 @@ const CreateRecipeScreen: React.FC = () => {
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
       tags: [],
+      category: 'main-course',
     },
   });
 
