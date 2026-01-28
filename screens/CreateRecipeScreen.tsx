@@ -218,22 +218,19 @@ const CreateRecipeScreen: React.FC = () => {
       <View style={styles.row}>
         <View style={styles.column}>
             <Controller name="prepTime" control={control} render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput label="Prep Time (min)" accessibilityLabel="Prep Time (min)" mode="outlined" keyboardType="numeric" onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.prepTime} />
-                <TextInput label="Prep Time (min)" mode="outlined" keyboardType="numeric" onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.prepTime} testID="prep-time-input" />
+                <TextInput label="Prep Time (min)" accessibilityLabel="Prep Time (min)" mode="outlined" keyboardType="numeric" onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.prepTime} testID="prep-time-input" />
             )} />
             {errors.prepTime && <HelperText type="error">{errors.prepTime.message}</HelperText>}
         </View>
         <View style={styles.column}>
             <Controller name="cookTime" control={control} render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput label="Cook Time (min)" accessibilityLabel="Cook Time (min)" mode="outlined" keyboardType="numeric" onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.cookTime} />
-                <TextInput label="Cook Time (min)" mode="outlined" keyboardType="numeric" onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.cookTime} testID="cook-time-input" />
+                <TextInput label="Cook Time (min)" accessibilityLabel="Cook Time (min)" mode="outlined" keyboardType="numeric" onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.cookTime} testID="cook-time-input" />
             )} />
             {errors.cookTime && <HelperText type="error">{errors.cookTime.message}</HelperText>}
         </View>
       </View>
        <Controller name="servings" control={control} render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput label="Servings" accessibilityLabel="Servings" mode="outlined" keyboardType="numeric" style={styles.input} onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.servings} />
-            <TextInput label="Servings" mode="outlined" keyboardType="numeric" style={styles.input} onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.servings} testID="servings-input" />
+            <TextInput label="Servings" accessibilityLabel="Servings" mode="outlined" keyboardType="numeric" style={styles.input} onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.servings} testID="servings-input" />
         )} />
         {errors.servings && <HelperText type="error">{errors.servings.message}</HelperText>}
 
@@ -260,20 +257,13 @@ const CreateRecipeScreen: React.FC = () => {
       {ingredientFields.map((item, index) => (
         <View key={item.id} style={styles.fieldArrayRow}>
           <Controller name={`ingredients.${index}.amount`} control={control} render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput label="Amount" accessibilityLabel="Amount" mode="outlined" style={styles.smallInput} keyboardType="numeric" onBlur={onBlur} onChangeText={onChange} value={String(value || '')} />
+              <TextInput label="Amount" accessibilityLabel="Amount" mode="outlined" style={styles.smallInput} keyboardType="numeric" onBlur={onBlur} onChangeText={onChange} value={String(value || '')} testID={`ingredient-amount-${index}`} />
           )} />
           <Controller name={`ingredients.${index}.unit`} control={control} render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput label="Unit" accessibilityLabel="Unit" mode="outlined" style={styles.mediumInput} onBlur={onBlur} onChangeText={onChange} value={value} />
+              <TextInput label="Unit" accessibilityLabel="Unit" mode="outlined" style={styles.mediumInput} onBlur={onBlur} onChangeText={onChange} value={value} testID={`ingredient-unit-${index}`} />
           )} />
           <Controller name={`ingredients.${index}.name`} control={control} render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput label="Name" accessibilityLabel="Name" mode="outlined" style={styles.largeInput} onBlur={onBlur} onChangeText={onChange} value={value} />
-              <TextInput label="Amount" mode="outlined" style={styles.smallInput} keyboardType="numeric" onBlur={onBlur} onChangeText={onChange} value={String(value || '')} testID={`ingredient-amount-${index}`} />
-          )} />
-          <Controller name={`ingredients.${index}.unit`} control={control} render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput label="Unit" mode="outlined" style={styles.mediumInput} onBlur={onBlur} onChangeText={onChange} value={value} testID={`ingredient-unit-${index}`} />
-          )} />
-          <Controller name={`ingredients.${index}.name`} control={control} render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput label="Name" mode="outlined" style={styles.largeInput} onBlur={onBlur} onChangeText={onChange} value={value} testID={`ingredient-name-${index}`} />
+              <TextInput label="Name" accessibilityLabel="Name" mode="outlined" style={styles.largeInput} onBlur={onBlur} onChangeText={onChange} value={value} testID={`ingredient-name-${index}`} />
           )} />
           <IconButton icon="delete" onPress={() => removeIngredient(index)} />
         </View>
@@ -287,8 +277,7 @@ const CreateRecipeScreen: React.FC = () => {
       {stepFields.map((item, index) => (
         <View key={item.id} style={styles.fieldArrayRow}>
           <Controller name={`steps.${index}.value`} control={control} render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput label={`Step ${index + 1}`} accessibilityLabel={`Step ${index + 1}`} mode="outlined" multiline style={styles.fullInput} onBlur={onBlur} onChangeText={onChange} value={value} />
-              <TextInput label={`Step ${index + 1}`} mode="outlined" multiline style={styles.fullInput} onBlur={onBlur} onChangeText={onChange} value={value} testID={`step-${index}`} />
+              <TextInput label={`Step ${index + 1}`} accessibilityLabel={`Step ${index + 1}`} mode="outlined" multiline style={styles.fullInput} onBlur={onBlur} onChangeText={onChange} value={value} testID={`step-${index}`} />
           )} />
           <IconButton icon="delete" onPress={() => removeStep(index)} />
         </View>
