@@ -25,6 +25,11 @@ describe('CreateRecipeScreen', () => {
     expect(getByText('Medium')).toBeTruthy();
     expect(getByText('Hard')).toBeTruthy();
 
+    // Verify testIDs exist
+    expect(getByTestId('difficulty-easy')).toBeTruthy();
+    expect(getByTestId('difficulty-medium')).toBeTruthy();
+    expect(getByTestId('difficulty-hard')).toBeTruthy();
+
     // Fill required fields
     fireEvent.changeText(getByTestId('recipe-name-input'), 'Test Recipe');
     fireEvent.changeText(getByTestId('description-input'), 'This is a test recipe description');
@@ -42,8 +47,8 @@ describe('CreateRecipeScreen', () => {
     // Fill Step (default one)
     fireEvent.changeText(getByTestId('step-0'), 'Mix everything together.');
 
-    // Select Difficulty 'Hard'
-    fireEvent.press(getByText('Hard'));
+    // Select Difficulty 'Hard' using testID
+    fireEvent.press(getByTestId('difficulty-hard'));
 
     // Submit
     fireEvent.press(getByTestId('save-button'));

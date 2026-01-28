@@ -221,10 +221,11 @@ const CreateRecipeScreen: React.FC = () => {
             value={value}
             onValueChange={onChange}
             buttons={[
-              { value: 'easy', label: 'Easy' },
-              { value: 'medium', label: 'Medium' },
-              { value: 'hard', label: 'Hard' },
+              { value: 'easy', label: 'Easy', testID: 'difficulty-easy' },
+              { value: 'medium', label: 'Medium', testID: 'difficulty-medium' },
+              { value: 'hard', label: 'Hard', testID: 'difficulty-hard' },
             ]}
+            testID="difficulty-selector"
           />
         )}
       />
