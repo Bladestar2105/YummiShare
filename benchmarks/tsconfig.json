@@ -1,9 +1,15 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmit": false,
-    "types": ["node"]
-  }
+    "types": ["node"],
+    "target": "es2017",
+    "lib": ["es2017", "dom"],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true
+  },
+  "include": ["**/*.ts"]
 }
