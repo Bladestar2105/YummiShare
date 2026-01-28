@@ -171,6 +171,7 @@ export const filterByMaxTime = (
   if (!maxMinutes) return recipes
   
   return recipes.filter(recipe => {
+    // Optimization: Use pre-calculated totalTime
     return recipe.totalTime <= maxMinutes
   })
 }
