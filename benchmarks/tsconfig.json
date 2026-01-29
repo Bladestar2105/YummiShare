@@ -15,7 +15,13 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": false,
-    "types": ["node"]
+    "types": ["node"],
+    "target": "es2017",
+    "lib": ["es2017", "dom"],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true
   },
-  "include": ["**/*.ts", "../utils/**/*.ts", "../types/**/*.ts", "../config/**/*.ts"]
+  "include": ["**/*.ts"]
 }
