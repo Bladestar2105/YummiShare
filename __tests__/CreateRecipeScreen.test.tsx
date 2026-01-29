@@ -39,7 +39,7 @@ jest.mock('react-native-paper', () => {
   const { View, Text, TouchableOpacity } = require('react-native');
   const Actual = jest.requireActual('react-native-paper');
 
-  const MockMenu = ({ visible, onDismiss, anchor, children }) => (
+  const MockMenu = ({ visible, onDismiss, anchor, children }: any) => (
     <View>
       {anchor}
       {visible && <View testID="menu-content">{children}</View>}
@@ -49,8 +49,8 @@ jest.mock('react-native-paper', () => {
 
   return {
     ...Actual,
-    Provider: ({ children }) => children,
-    Switch: ({ value, onValueChange, testID }) => (
+    Provider: ({ children }: any) => children,
+    Switch: ({ value, onValueChange, testID }: any) => (
       <TouchableOpacity testID={testID} onPress={() => onValueChange(!value)}>
         <Text>{value ? 'On' : 'Off'}</Text>
       </TouchableOpacity>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
 import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch, SegmentedButtons, Chip, Menu, TouchableRipple } from 'react-native-paper';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, useFieldArray, Controller, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { RecipeFormData, Category, Difficulty } from '../types';
@@ -51,7 +51,7 @@ const CreateRecipeScreen: React.FC = () => {
   const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({
-    resolver: zodResolver(recipeFormSchema),
+    resolver: zodResolver(recipeFormSchema) as Resolver<FormValues>,
     defaultValues: {
       name: '',
       description: '',
