@@ -1,9 +1,18 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
+    "target": "es2019",
     "module": "commonjs",
     "moduleResolution": "node",
-    "noEmit": false,
+    "lib": ["es2019"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "types": ["node"]
-  }
+  },
+  "include": [
+    "../types/index.ts",
+    "../config/appConfig.ts",
+    "*.ts"
+  ]
 }
