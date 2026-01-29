@@ -242,15 +242,17 @@ const CreateRecipeScreen: React.FC = () => {
         name="difficulty"
         control={control}
         render={({ field: { onChange, value } }) => (
-          <SegmentedButtons
-            value={value}
-            onValueChange={onChange}
-            buttons={[
-              { value: 'easy', label: 'Easy', testID: 'difficulty-easy' },
-              { value: 'medium', label: 'Medium', testID: 'difficulty-medium' },
-              { value: 'hard', label: 'Hard', testID: 'difficulty-hard' },
-            ]}
-          />
+          <View testID="difficulty-selection-container">
+            <SegmentedButtons
+              value={value}
+              onValueChange={onChange}
+              buttons={[
+                { value: 'easy', label: 'Easy', testID: 'difficulty-easy' },
+                { value: 'medium', label: 'Medium', testID: 'difficulty-medium' },
+                { value: 'hard', label: 'Hard', testID: 'difficulty-hard' },
+              ]}
+            />
+          </View>
         )}
       />
 
