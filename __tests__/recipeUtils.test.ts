@@ -1,4 +1,4 @@
-import { filterByMaxTime, searchByIngredients, calculateRatingStats } from '../utils/recipeUtils';
+import { filterByMaxTime, searchByIngredients, calculateRatingStats, getRecipeSuggestions } from '../utils/recipeUtils';
 import { Recipe, Ingredient } from '../types';
 
 describe('recipeUtils', () => {
@@ -137,6 +137,55 @@ describe('recipeUtils', () => {
 
       expect(result.distribution).toEqual({ 5: 2, 4: 0, 3: 0, 2: 0, 1: 1 });
       // Verify it didn't crash
+    });
+  });
+
+  describe('getRecipeSuggestions', () => {
+    const mockRecipes: Recipe[] = Array.from({ length: 10 }, (_, i) => ({
+      id: `${i}`,
+      name: `Recipe ${i}`,
+      description: 'desc',
+      category: 'main-course',
+      prepTime: 10,
+      cookTime: 10,
+      totalTime: 20,
+      servings: 2,
+      defaultServings: 2,
+      difficulty: 'easy',
+      ingredients: [],
+      steps: [],
+      tags: [],
+      isFavorite: false,
+      rating: 0,
+      reviewCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      userId: 'u1',
+      isPublic: true
+    } as Recipe));
+
+    it('returns requested number of suggestions', () => {
+      const suggestions = getRecipeSuggestions(mockRecipes, 3);
+      expect(suggestions).toHaveLength(3);
+    });
+
+    it('returns unique suggestions', () => {
+      const suggestions = getRecipeSuggestions(mockRecipes, 5);
+      const uniqueIds = new Set(suggestions.map(r => r.id));
+      expect(uniqueIds.size).toBe(5);
+    });
+
+    it('returns all recipes shuffled if count >= length', () => {
+      const suggestions = getRecipeSuggestions(mockRecipes, 15);
+      expect(suggestions).toHaveLength(10);
+      // Check content is same, order might differ
+      const suggestionIds = suggestions.map(r => r.id).sort();
+      const originalIds = mockRecipes.map(r => r.id).sort();
+      expect(suggestionIds).toEqual(originalIds);
+    });
+
+    it('returns empty array if input is empty', () => {
+      expect(getRecipeSuggestions([], 3)).toHaveLength(0);
     });
   });
 });
