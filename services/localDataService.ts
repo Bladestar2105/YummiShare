@@ -7,16 +7,29 @@ import { getUserId } from './userService';
 
 const RECIPES_KEY = 'recipes';
 
+let cachedRecipes: Recipe[] | null = null;
+
 // Helper function to get all recipes
 const getRecipes = async (): Promise<Recipe[]> => {
+  if (cachedRecipes) {
+    return cachedRecipes;
+  }
+
   try {
     const jsonValue = await AsyncStorage.getItem(RECIPES_KEY);
+
+    // Check again if cache was populated while we were waiting
+    if (cachedRecipes) {
+      return cachedRecipes;
+    }
+
     const recipes = jsonValue != null ? JSON.parse(jsonValue) : [];
-    return recipes.map((recipe: any) => ({
+    cachedRecipes = recipes.map((recipe: any) => ({
       ...recipe,
       createdAt: new Date(recipe.createdAt),
       updatedAt: new Date(recipe.updatedAt),
     }));
+    return cachedRecipes!;
   } catch (e) {
     console.error('Failed to fetch recipes.', e);
     return [];
@@ -25,12 +38,17 @@ const getRecipes = async (): Promise<Recipe[]> => {
 
 // Helper function to set all recipes
 const setRecipes = async (recipes: Recipe[]): Promise<void> => {
+  cachedRecipes = recipes;
   try {
     const jsonValue = JSON.stringify(recipes);
     await AsyncStorage.setItem(RECIPES_KEY, jsonValue);
   } catch (e) {
     console.error('Failed to save recipes.', e);
   }
+};
+
+export const resetCache = () => {
+  cachedRecipes = null;
 };
 
 // --- Public API ---
