@@ -212,6 +212,7 @@ const CreateRecipeScreen: React.FC = () => {
               value={value}
               onValueChange={onChange}
               testID="is-public-switch"
+              accessibilityLabel="Make Recipe Public"
             />
           )}
         />
