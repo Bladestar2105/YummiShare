@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { RecipeFormData, Category, Difficulty } from '../types';
 import { saveRecipe } from '../services/localDataService';
-import { CATEGORIES, getCategoryName } from '../config/categories';
+import { CATEGORIES, getCategoryName, DIFFICULTY_LEVELS } from '../config/categories';
 
 // Zod Schema for Validation
 const ingredientSchema = z.object({
@@ -247,11 +247,11 @@ const CreateRecipeScreen: React.FC = () => {
             <SegmentedButtons
               value={value}
               onValueChange={onChange}
-              buttons={[
-                { value: 'easy', label: 'Easy', testID: 'difficulty-easy' },
-                { value: 'medium', label: 'Medium', testID: 'difficulty-medium' },
-                { value: 'hard', label: 'Hard', testID: 'difficulty-hard' },
-              ]}
+              buttons={DIFFICULTY_LEVELS.map((level) => ({
+                value: level.id,
+                label: level.name,
+                testID: `difficulty-${level.id}`,
+              }))}
             />
           </View>
         )}
