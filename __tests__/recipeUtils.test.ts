@@ -1,4 +1,4 @@
-import { filterByMaxTime, searchByIngredients } from '../utils/recipeUtils';
+import { filterByMaxTime, searchByIngredients, generateRecipeShareText } from '../utils/recipeUtils';
 import { Recipe, Ingredient } from '../types';
 
 describe('recipeUtils', () => {

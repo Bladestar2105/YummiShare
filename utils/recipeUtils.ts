@@ -66,12 +66,16 @@ export const generateRecipeShareText = (recipe: Recipe): string => {
 
   if (recipe.ingredients.length > 0) {
     parts.push('', '📝 Zutaten:')
-    parts.push(...recipe.ingredients.map(ing => `• ${ing.amount} ${ing.unit} ${ing.name}`))
+    for (const ing of recipe.ingredients) {
+      parts.push(`• ${ing.amount} ${ing.unit} ${ing.name}`)
+    }
   }
 
   if (recipe.steps.length > 0) {
     parts.push('', '👨‍🍳 Zubereitung:')
-    parts.push(...recipe.steps.map((step, i) => `${i + 1}. ${step}`))
+    for (let i = 0; i < recipe.steps.length; i++) {
+      parts.push(`${i + 1}. ${recipe.steps[i]}`)
+    }
   }
 
   parts.push('', 'Guten Appetit! 🍴')
@@ -170,10 +174,13 @@ export const filterByMaxTime = (
 ): Recipe[] => {
   if (!maxMinutes) return recipes
   
-  return recipes.filter(recipe => {
-    // Optimization: Use pre-calculated totalTime
-    return recipe.totalTime <= maxMinutes
-  })
+  const result: Recipe[] = []
+  for (let i = 0; i < recipes.length; i++) {
+    if (recipes[i].totalTime <= maxMinutes) {
+      result.push(recipes[i])
+    }
+  }
+  return result
 }
 
 /**
