@@ -3,7 +3,7 @@ import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import CreateRecipeScreen from '../screens/CreateRecipeScreen';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { saveRecipe } from '../services/localDataService';
-import { Alert } from 'react-native';
+import { Alert, TouchableOpacity, View, Text } from 'react-native';
 
 // Mock navigation
 jest.mock('@react-navigation/native', () => {
@@ -15,7 +15,7 @@ jest.mock('@react-navigation/native', () => {
   };
 });
 
-// Mock the saveRecipe service
+// Mock services
 jest.mock('../services/localDataService', () => ({
   saveRecipe: jest.fn(),
 }));
@@ -25,16 +25,45 @@ jest.mock('react-native-safe-area-context', () => {
   const React = require('react');
   const inset = { top: 0, right: 0, bottom: 0, left: 0 };
   return {
-    SafeAreaProvider: ({ children }) => children,
-    SafeAreaConsumer: ({ children }) => children(inset),
+    SafeAreaProvider: ({ children }: { children: React.ReactNode }) => children,
+    SafeAreaConsumer: ({ children }: { children: (inset: any) => React.ReactNode }) => children(inset),
     useSafeAreaInsets: () => inset,
     useSafeAreaFrame: () => ({ x: 0, y: 0, width: 390, height: 844 }),
     SafeAreaInsetsContext: React.createContext(inset),
   };
 });
 
-// Mock Alert
-jest.spyOn(Alert, 'alert');
+// Mock react-native-paper
+jest.mock('react-native-paper', () => {
+  const React = require('react');
+  const { View, Text, TouchableOpacity } = require('react-native');
+  const Actual = jest.requireActual('react-native-paper');
+
+  const Menu = ({ visible, onDismiss, anchor, children }: any) => {
+    return (
+      <View>
+        {anchor}
+        {visible && <View testID="mock-menu">{children}</View>}
+      </View>
+    );
+  };
+
+  const MenuItem = ({ onPress, title }: any) => (
+    <TouchableOpacity onPress={onPress} testID={`menu-item-${title}`}>
+      <Text>{title}</Text>
+    </TouchableOpacity>
+  );
+
+  // Attach Item to Menu
+  (Menu as any).Item = MenuItem;
+
+  return {
+    ...Actual,
+    Provider: ({ children }: any) => children,
+    Menu: Menu,
+    // We don't export MenuItem directly as it is accessed via Menu.Item
+  };
+});
 
 const renderWithProviders = (component: React.ReactElement) => {
   return render(
@@ -49,40 +78,43 @@ describe('CreateRecipeScreen', () => {
     jest.clearAllMocks();
   });
 
-  it('renders correctly and allows submitting the form', async () => {
+  it('renders correctly and allows submitting the form with category selection', async () => {
     (saveRecipe as jest.Mock).mockResolvedValue({});
+    jest.spyOn(Alert, 'alert');
 
-    const { getByText, getByTestId, getAllByTestId } = renderWithProviders(<CreateRecipeScreen />);
+    const { getByText, getByLabelText, getByTestId } = renderWithProviders(<CreateRecipeScreen />);
 
     // Check if title exists
     expect(getByText('Create a New Recipe')).toBeTruthy();
 
-    // Verify switch exists
-    expect(getByTestId('is-public-switch')).toBeTruthy();
-    expect(getByText('Make Recipe Public')).toBeTruthy();
-
     // Fill in required fields
-    const inputs = getAllByTestId('text-input-outlined');
+    fireEvent.changeText(getByTestId('recipe-name-input'), 'Test Recipe');
+    fireEvent.changeText(getByTestId('description-input'), 'This is a test description for the recipe.');
 
-    fireEvent.changeText(inputs[0], 'Test Recipe');
-    fireEvent.changeText(inputs[1], 'This is a test description');
-    fireEvent.changeText(inputs[2], '10');
-    fireEvent.changeText(inputs[3], '20');
-    fireEvent.changeText(inputs[4], '4');
+    // Fill numbers
+    fireEvent.changeText(getByTestId('prep-time-input'), '10');
+    fireEvent.changeText(getByTestId('cook-time-input'), '20');
+    fireEvent.changeText(getByTestId('servings-input'), '4');
 
-    // Ingredient
-    fireEvent.changeText(inputs[5], '100');
-    fireEvent.changeText(inputs[6], 'g');
-    fireEvent.changeText(inputs[7], 'Flour');
+    // Fill ingredient (assuming default one exists)
+    fireEvent.changeText(getByTestId('ingredient-amount-0'), '100');
+    fireEvent.changeText(getByTestId('ingredient-unit-0'), 'g');
+    fireEvent.changeText(getByTestId('ingredient-name-0'), 'Flour');
 
-    // Step
-    fireEvent.changeText(inputs[8], 'Mix everything together.');
+    // Fill step
+    fireEvent.changeText(getByTestId('step-0'), 'Mix everything together.');
 
-    // Difficulty
-    // fireEvent.press(getByTestId('difficulty-medium')); // Assuming default or specific ID
+    // --- Category Selection ---
+    // Open the menu
+    const categoryInputTrigger = getByLabelText('Category');
+    fireEvent.press(categoryInputTrigger);
+
+    // Select 'Desserts' (id: dessert).
+    const dessertItem = getByText(/Desserts/);
+    fireEvent.press(dessertItem);
 
     // Submit
-    const saveButton = getByText('Save Recipe');
+    const saveButton = getByTestId('save-button');
     await act(async () => {
         fireEvent.press(saveButton);
     });
@@ -90,6 +122,7 @@ describe('CreateRecipeScreen', () => {
     await waitFor(() => {
         expect(saveRecipe).toHaveBeenCalledWith(expect.objectContaining({
             name: 'Test Recipe',
+            category: 'dessert',
             prepTime: 10,
             cookTime: 20,
             servings: 4,
