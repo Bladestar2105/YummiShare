@@ -166,7 +166,7 @@ export const filterByDifficulty = (
 }
 
 /**
- * Filter recipes by max prep time
+ * Filter recipes by max total time (prep + cook)
  */
 export const filterByMaxTime = (
   recipes: Recipe[],
@@ -235,7 +235,9 @@ export const calculateRatingStats = (ratings: number[]) => {
   // Calculate distribution
   const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
   ratings.forEach(rating => {
-    distribution[rating as keyof typeof distribution]++
+    if (rating in distribution) {
+      distribution[rating as keyof typeof distribution]++
+    }
   })
   
   return { average: roundToDecimals(average, 1), count, distribution }

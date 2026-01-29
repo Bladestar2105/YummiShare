@@ -11,7 +11,12 @@ const RECIPES_KEY = 'recipes';
 const getRecipes = async (): Promise<Recipe[]> => {
   try {
     const jsonValue = await AsyncStorage.getItem(RECIPES_KEY);
-    return jsonValue != null ? JSON.parse(jsonValue) : [];
+    const recipes = jsonValue != null ? JSON.parse(jsonValue) : [];
+    return recipes.map((recipe: any) => ({
+      ...recipe,
+      createdAt: new Date(recipe.createdAt),
+      updatedAt: new Date(recipe.updatedAt),
+    }));
   } catch (e) {
     console.error('Failed to fetch recipes.', e);
     return [];

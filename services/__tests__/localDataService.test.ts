@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { saveRecipe } from '../localDataService';
+import { saveRecipe, getAllRecipes } from '../localDataService';
 import { getUserId } from '../userService';
 import { v4 as uuidv4 } from 'uuid';
 import { RecipeFormData } from '../../types';
@@ -60,6 +60,28 @@ describe('localDataService', () => {
         'recipes',
         expect.stringContaining(mockUserId)
       );
+    });
+  });
+
+  describe('getAllRecipes', () => {
+    it('should return recipes with Date objects for createdAt and updatedAt', async () => {
+      const mockRecipes = [
+        {
+          id: '1',
+          name: 'Test',
+          createdAt: '2023-01-01T00:00:00.000Z',
+          updatedAt: '2023-01-02T00:00:00.000Z',
+        }
+      ];
+
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(mockRecipes));
+
+      const recipes = await getAllRecipes();
+
+      expect(recipes).toHaveLength(1);
+      expect(recipes[0].createdAt).toBeInstanceOf(Date);
+      expect(recipes[0].updatedAt).toBeInstanceOf(Date);
+      expect(recipes[0].createdAt.toISOString()).toBe('2023-01-01T00:00:00.000Z');
     });
   });
 });

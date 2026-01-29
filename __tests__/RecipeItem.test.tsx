@@ -39,6 +39,7 @@ describe('RecipeItem', () => {
     act(() => {
       root = create(<RecipeItem item={mockItem} />);
     });
+    // @ts-ignore
     expect(root.toJSON()).toBeDefined();
   });
 });
