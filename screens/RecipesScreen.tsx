@@ -67,6 +67,7 @@ const RecipesScreen: React.FC = () => {
         style={styles.fab}
         icon="plus"
         onPress={handleCreateRecipe}
+        accessibilityLabel="create-recipe-fab"
       />
     </View>
   );

@@ -321,3 +321,27 @@ export const extractIngredientsFromText = (text: string): Ingredient[] => {
 export const generateId = (): string => {
   return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 }
+/**
+ * Get random recipe suggestions
+ */
+export const getRecipeSuggestions = (recipes: Recipe[], count: number = 3): Recipe[] => {
+  if (recipes.length === 0) return []
+
+  if (recipes.length <= count) {
+    // Return shuffled copy of all recipes
+    return [...recipes].sort(() => 0.5 - Math.random())
+  }
+
+  const suggestions: Recipe[] = []
+  const indices = new Set<number>()
+
+  while (indices.size < count) {
+    const index = Math.floor(Math.random() * recipes.length)
+    if (!indices.has(index)) {
+      indices.add(index)
+      suggestions.push(recipes[index])
+    }
+  }
+
+  return suggestions
+}

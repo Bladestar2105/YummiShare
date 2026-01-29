@@ -27,7 +27,7 @@ const HomeStack = () => {
       <Stack.Screen
         name="RecipeDetail"
         component={RecipeDetailScreen}
-        options={{ title: 'Rezept Details' }}
+        options={{ title: 'Recipe Details' }}
       />
     </Stack.Navigator>
   );
@@ -39,17 +39,17 @@ const RecipesStack = () => {
       <Stack.Screen
         name="RecipesMain"
         component={RecipesScreen}
-        options={{ title: 'Meine Rezepte' }}
+        options={{ title: 'My Recipes' }}
       />
       <Stack.Screen
         name="RecipeDetail"
         component={RecipeDetailScreen}
-        options={{ title: 'Rezept Details' }}
+        options={{ title: 'Recipe Details' }}
       />
       <Stack.Screen
         name="CreateRecipe"
         component={CreateRecipeScreen}
-        options={{ title: 'Neues Rezept' }}
+        options={{ title: 'New Recipe' }}
       />
     </Stack.Navigator>
   );
@@ -61,12 +61,12 @@ const SearchStack = () => {
       <Stack.Screen
         name="SearchMain"
         component={SearchScreen}
-        options={{ title: 'Suchen' }}
+        options={{ title: 'Search' }}
       />
       <Stack.Screen
         name="RecipeDetail"
         component={RecipeDetailScreen}
-        options={{ title: 'Rezept Details' }}
+        options={{ title: 'Recipe Details' }}
       />
     </Stack.Navigator>
   );
@@ -78,12 +78,12 @@ const FavoritesStack = () => {
       <Stack.Screen
         name="FavoritesMain"
         component={FavoritesScreen}
-        options={{ title: 'Favoriten' }}
+        options={{ title: 'Favorites' }}
       />
       <Stack.Screen
         name="RecipeDetail"
         component={RecipeDetailScreen}
-        options={{ title: 'Rezept Details' }}
+        options={{ title: 'Recipe Details' }}
       />
     </Stack.Navigator>
   );
@@ -95,7 +95,7 @@ const ProfileStack = () => {
       <Stack.Screen
         name="ProfileMain"
         component={ProfileScreen}
-        options={{ title: 'Profil' }}
+        options={{ title: 'Profile' }}
       />
     </Stack.Navigator>
   );
@@ -132,7 +132,7 @@ const AppNavigator: React.FC = () => {
         name="Recipes"
         component={RecipesStack}
         options={{
-          tabBarLabel: 'Rezepte',
+          tabBarLabel: 'Recipes',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="restaurant" size={size} color={color} />
           ),
@@ -142,7 +142,7 @@ const AppNavigator: React.FC = () => {
         name="Search"
         component={SearchStack}
         options={{
-          tabBarLabel: 'Suchen',
+          tabBarLabel: 'Search',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="search" size={size} color={color} />
           ),
@@ -152,7 +152,7 @@ const AppNavigator: React.FC = () => {
         name="Favorites"
         component={FavoritesStack}
         options={{
-          tabBarLabel: 'Favoriten',
+          tabBarLabel: 'Favorites',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart" size={size} color={color} />
           ),
@@ -162,7 +162,7 @@ const AppNavigator: React.FC = () => {
         name="Profile"
         component={ProfileStack}
         options={{
-          tabBarLabel: 'Profil',
+          tabBarLabel: 'Profile',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),

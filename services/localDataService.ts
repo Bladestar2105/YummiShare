@@ -165,3 +165,12 @@ export const deleteRecipe = async (id: string): Promise<boolean> => {
     await setRecipes(filteredRecipes);
     return true;
 };
+
+/**
+ * Seeds the database with a list of recipes.
+ * WARNING: This overwrites all existing recipes!
+ * @param recipes The list of recipes to save.
+ */
+export const seedRecipes = async (recipes: Recipe[]): Promise<void> => {
+  await setRecipes(recipes);
+};
