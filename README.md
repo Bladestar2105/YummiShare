@@ -2,6 +2,17 @@
 
 A modern, user-friendly app for creating, managing, and sharing recipes for Android and iOS.
 
+## 📱 Screenshots
+
+| Screen | iOS | Android |
+|--------|-----|---------|
+| **Home** | <img src="assets/screenshots/home_ios.png" width="200" /> | <img src="assets/screenshots/home_android.png" width="200" /> |
+| **Recipes** | <img src="assets/screenshots/list_ios.png" width="200" /> | <img src="assets/screenshots/list_android.png" width="200" /> |
+| **Detail** | <img src="assets/screenshots/detail_ios.png" width="200" /> | <img src="assets/screenshots/detail_android.png" width="200" /> |
+| **Create** | <img src="assets/screenshots/create_ios.png" width="200" /> | <img src="assets/screenshots/create_android.png" width="200" /> |
+| **Search** | <img src="assets/screenshots/search_ios.png" width="200" /> | <img src="assets/screenshots/search_android.png" width="200" /> |
+| **Profile** | <img src="assets/screenshots/profile_ios.png" width="200" /> | <img src="assets/screenshots/profile_android.png" width="200" /> |
+
 ## 🎯 Features
 
 ### Core Features
