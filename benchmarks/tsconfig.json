@@ -3,25 +3,16 @@
     "target": "es2019",
     "module": "commonjs",
     "moduleResolution": "node",
-    "target": "es2017",
-    "esModuleInterop": true,
-    "strict": true,
-    "types": ["node"],
-    "noEmit": false
-  }
     "lib": ["es2019"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": false,
-    "types": ["node"],
-    "target": "es2017",
-    "lib": ["es2017", "dom"],
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true
+    "types": ["node"]
   },
-  "include": ["**/*.ts"]
+  "include": [
+    "../types/index.ts",
+    "../config/appConfig.ts",
+    "*.ts"
+  ]
 }

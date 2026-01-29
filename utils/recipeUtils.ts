@@ -132,12 +132,12 @@ export const searchByName = (
 ): Recipe[] => {
   if (!query.trim()) return recipes
   
-  const lowerQuery = query.toLowerCase().trim()
+  const pattern = new RegExp(escapeRegExp(query.trim()), 'i')
   
   return recipes.filter(recipe =>
-    recipe.name.toLowerCase().includes(lowerQuery) ||
-    recipe.description.toLowerCase().includes(lowerQuery) ||
-    recipe.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
+    pattern.test(recipe.name) ||
+    pattern.test(recipe.description) ||
+    recipe.tags.some(tag => pattern.test(tag))
   )
 }
 
