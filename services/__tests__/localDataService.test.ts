@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { saveRecipe, getAllRecipes } from '../localDataService';
+import { saveRecipe, getAllRecipes, resetCache } from '../localDataService';
 import { getUserId } from '../userService';
 import { v4 as uuidv4 } from 'uuid';
 import { RecipeFormData } from '../../types';
@@ -12,6 +12,7 @@ jest.mock('uuid', () => ({
 describe('localDataService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetCache(); // Ensure cache is empty before each test
     (AsyncStorage.getItem as jest.Mock).mockClear();
     (AsyncStorage.setItem as jest.Mock).mockClear();
   });
@@ -82,6 +83,30 @@ describe('localDataService', () => {
       expect(recipes[0].createdAt).toBeInstanceOf(Date);
       expect(recipes[0].updatedAt).toBeInstanceOf(Date);
       expect(recipes[0].createdAt.toISOString()).toBe('2023-01-01T00:00:00.000Z');
+    });
+
+    it('should use cache on second call', async () => {
+      const mockRecipes = [
+        {
+          id: '1',
+          name: 'Test',
+          createdAt: '2023-01-01T00:00:00.000Z',
+          updatedAt: '2023-01-02T00:00:00.000Z',
+        }
+      ];
+
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(mockRecipes));
+
+      // First call
+      await getAllRecipes();
+      expect(AsyncStorage.getItem).toHaveBeenCalledTimes(1);
+
+      // Second call
+      (AsyncStorage.getItem as jest.Mock).mockClear();
+      const cachedRecipes = await getAllRecipes();
+      expect(AsyncStorage.getItem).not.toHaveBeenCalled();
+      expect(cachedRecipes).toHaveLength(1);
+      expect(cachedRecipes[0].id).toBe('1');
     });
   });
 });
