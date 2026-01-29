@@ -93,7 +93,7 @@ describe('CreateRecipeScreen', () => {
     const categoryInput = getByLabelText('Category');
     fireEvent.press(categoryInput);
 
-    const dessertItem = await waitFor(() => getByText('🍰 Desserts'));
+    const dessertItem = await waitFor(() => getByTestId('category-item-dessert'));
     fireEvent.press(dessertItem);
 
     const saveButton = getByTestId('save-button');
