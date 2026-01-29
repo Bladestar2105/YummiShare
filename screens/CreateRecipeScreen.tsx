@@ -218,50 +218,19 @@ const CreateRecipeScreen: React.FC = () => {
       <View style={styles.row}>
         <View style={styles.column}>
             <Controller name="prepTime" control={control} render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  label="Prep Time (min)"
-                  accessibilityLabel="Prep Time (min)"
-                  mode="outlined"
-                  keyboardType="numeric"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={String(value || '')}
-                  error={!!errors.prepTime}
-                  testID="prep-time-input"
-                />
+                <TextInput label="Prep Time (min)" accessibilityLabel="Prep Time (min)" mode="outlined" keyboardType="numeric" onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.prepTime} testID="prep-time-input" />
             )} />
             {errors.prepTime && <HelperText type="error">{errors.prepTime.message}</HelperText>}
         </View>
         <View style={styles.column}>
             <Controller name="cookTime" control={control} render={({ field: { onChange, onBlur, value } }) => (
-                <TextInput
-                  label="Cook Time (min)"
-                  accessibilityLabel="Cook Time (min)"
-                  mode="outlined"
-                  keyboardType="numeric"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={String(value || '')}
-                  error={!!errors.cookTime}
-                  testID="cook-time-input"
-                />
+                <TextInput label="Cook Time (min)" accessibilityLabel="Cook Time (min)" mode="outlined" keyboardType="numeric" onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.cookTime} testID="cook-time-input" />
             )} />
             {errors.cookTime && <HelperText type="error">{errors.cookTime.message}</HelperText>}
         </View>
       </View>
        <Controller name="servings" control={control} render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              label="Servings"
-              accessibilityLabel="Servings"
-              mode="outlined"
-              keyboardType="numeric"
-              style={styles.input}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={String(value || '')}
-              error={!!errors.servings}
-              testID="servings-input"
-            />
+            <TextInput label="Servings" accessibilityLabel="Servings" mode="outlined" keyboardType="numeric" style={styles.input} onBlur={onBlur} onChangeText={onChange} value={String(value || '')} error={!!errors.servings} testID="servings-input" />
         )} />
         {errors.servings && <HelperText type="error">{errors.servings.message}</HelperText>}
 
@@ -306,17 +275,7 @@ const CreateRecipeScreen: React.FC = () => {
       {stepFields.map((item, index) => (
         <View key={item.id} style={styles.fieldArrayRow}>
           <Controller name={`steps.${index}.value`} control={control} render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                label={`Step ${index + 1}`}
-                accessibilityLabel={`Step ${index + 1}`}
-                mode="outlined"
-                multiline
-                style={styles.fullInput}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                testID={`step-${index}`}
-              />
+              <TextInput label={`Step ${index + 1}`} accessibilityLabel={`Step ${index + 1}`} mode="outlined" multiline style={styles.fullInput} onBlur={onBlur} onChangeText={onChange} value={value} testID={`step-${index}`} />
           )} />
           <IconButton icon="delete" onPress={() => removeStep(index)} />
         </View>
@@ -330,6 +289,7 @@ const CreateRecipeScreen: React.FC = () => {
       <View style={styles.tagInputContainer}>
         <TextInput
             label="Add Tag"
+            accessibilityLabel="Add Tag"
             mode="outlined"
             style={styles.tagInput}
             value={currentTag}

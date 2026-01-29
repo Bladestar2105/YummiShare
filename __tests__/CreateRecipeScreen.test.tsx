@@ -3,7 +3,7 @@ import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import CreateRecipeScreen from '../screens/CreateRecipeScreen';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { saveRecipe } from '../services/localDataService';
-import { Alert, TouchableOpacity, View, Text } from 'react-native';
+import { Alert } from 'react-native';
 
 // Mock navigation
 jest.mock('@react-navigation/native', () => {
@@ -39,81 +39,63 @@ jest.mock('react-native-paper', () => {
   const { View, Text, TouchableOpacity } = require('react-native');
   const Actual = jest.requireActual('react-native-paper');
 
-  const Menu = ({ visible, onDismiss, anchor, children }: any) => {
-    return (
-      <View>
-        {anchor}
-        {visible && <View testID="mock-menu">{children}</View>}
-      </View>
-    );
-  };
-
-  const MenuItem = ({ onPress, title }: any) => (
-    <TouchableOpacity onPress={onPress} testID={`menu-item-${title}`}>
-      <Text>{title}</Text>
-    </TouchableOpacity>
+  const MockMenu = ({ visible, onDismiss, anchor, children }) => (
+    <View>
+      {anchor}
+      {visible && <View testID="menu-content">{children}</View>}
+    </View>
   );
-
-  // Attach Item to Menu
-  (Menu as any).Item = MenuItem;
+  MockMenu.Item = Actual.Menu.Item; // Preserve Item
 
   return {
     ...Actual,
-    Provider: ({ children }: any) => children,
-    Menu: Menu,
-    // We don't export MenuItem directly as it is accessed via Menu.Item
+    Provider: ({ children }) => children,
+    Switch: ({ value, onValueChange, testID }) => (
+      <TouchableOpacity testID={testID} onPress={() => onValueChange(!value)}>
+        <Text>{value ? 'On' : 'Off'}</Text>
+      </TouchableOpacity>
+    ),
+    Menu: MockMenu,
   };
 });
-
-const renderWithProviders = (component: React.ReactElement) => {
-  return render(
-    <PaperProvider>
-      {component}
-    </PaperProvider>
-  );
-};
 
 describe('CreateRecipeScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it('renders correctly and allows submitting the form with category selection', async () => {
     (saveRecipe as jest.Mock).mockResolvedValue({});
     jest.spyOn(Alert, 'alert');
+  });
 
-    const { getByText, getByLabelText, getByTestId } = renderWithProviders(<CreateRecipeScreen />);
+  const renderWithProviders = (component: React.ReactElement) => {
+    return render(
+      <PaperProvider>
+        {component}
+      </PaperProvider>
+    );
+  };
 
-    // Check if title exists
+  it('renders correctly and allows submitting the form', async () => {
+    const { getByText, getByTestId, getByLabelText } = renderWithProviders(<CreateRecipeScreen />);
+
     expect(getByText('Create a New Recipe')).toBeTruthy();
 
-    // Fill in required fields
     fireEvent.changeText(getByTestId('recipe-name-input'), 'Test Recipe');
     fireEvent.changeText(getByTestId('description-input'), 'This is a test description for the recipe.');
-
-    // Fill numbers
     fireEvent.changeText(getByTestId('prep-time-input'), '10');
     fireEvent.changeText(getByTestId('cook-time-input'), '20');
     fireEvent.changeText(getByTestId('servings-input'), '4');
-
-    // Fill ingredient (assuming default one exists)
     fireEvent.changeText(getByTestId('ingredient-amount-0'), '100');
     fireEvent.changeText(getByTestId('ingredient-unit-0'), 'g');
     fireEvent.changeText(getByTestId('ingredient-name-0'), 'Flour');
+    fireEvent.changeText(getByTestId('step-0'), 'Mix everything together.'); // > 5 chars
 
-    // Fill step
-    fireEvent.changeText(getByTestId('step-0'), 'Mix everything together.');
+    // Category
+    const categoryInput = getByLabelText('Category');
+    fireEvent.press(categoryInput);
 
-    // --- Category Selection ---
-    // Open the menu
-    const categoryInputTrigger = getByLabelText('Category');
-    fireEvent.press(categoryInputTrigger);
-
-    // Select 'Desserts' (id: dessert).
-    const dessertItem = getByText(/Desserts/);
+    const dessertItem = await waitFor(() => getByText('🍰 Desserts'));
     fireEvent.press(dessertItem);
 
-    // Submit
     const saveButton = getByTestId('save-button');
     await act(async () => {
         fireEvent.press(saveButton);
@@ -129,6 +111,91 @@ describe('CreateRecipeScreen', () => {
             ingredients: [expect.objectContaining({ name: 'Flour', amount: 100, unit: 'g' })],
             steps: ['Mix everything together.']
         }));
+    });
+  });
+
+  it('renders difficulty selection and submits correctly', async () => {
+    const { getByText, getByTestId } = renderWithProviders(<CreateRecipeScreen />);
+
+    expect(getByText('Make Recipe Public')).toBeTruthy();
+    expect(getByTestId('is-public-switch')).toBeTruthy();
+
+    // Fill required
+    fireEvent.changeText(getByTestId('recipe-name-input'), 'Difficulty Test');
+    fireEvent.changeText(getByTestId('description-input'), 'This is a long enough description');
+    fireEvent.changeText(getByTestId('prep-time-input'), '5');
+    fireEvent.changeText(getByTestId('cook-time-input'), '5');
+    fireEvent.changeText(getByTestId('servings-input'), '2');
+    fireEvent.changeText(getByTestId('ingredient-name-0'), 'Ingredient');
+    fireEvent.changeText(getByTestId('ingredient-amount-0'), '1');
+    fireEvent.changeText(getByTestId('ingredient-unit-0'), 'unit');
+    fireEvent.changeText(getByTestId('step-0'), 'Step description'); // > 5 chars
+
+    // Select Difficulty
+    fireEvent.press(getByTestId('difficulty-hard'));
+
+    // Submit
+    fireEvent.press(getByTestId('save-button'));
+
+    await waitFor(() => {
+      expect(saveRecipe).toHaveBeenCalled();
+    });
+
+    const calledWith = (saveRecipe as jest.Mock).mock.calls[0][0];
+    expect(calledWith.difficulty).toBe('hard');
+  });
+
+  it('allows adding tags', async () => {
+    const { getByText, getByLabelText } = renderWithProviders(<CreateRecipeScreen />);
+
+    const tagInput = getByLabelText('Add Tag');
+
+    fireEvent.changeText(tagInput, 'Vegetarian');
+    fireEvent(tagInput, 'submitEditing');
+
+    await waitFor(() => {
+        expect(getByText('Vegetarian')).toBeTruthy();
+    });
+  });
+
+  it('defaults to private and can be toggled to public', async () => {
+    const { getByTestId, getByText } = renderWithProviders(<CreateRecipeScreen />);
+
+    // Check default state (Private/False)
+    const switchEl = getByTestId('is-public-switch');
+    expect(getByText('Off')).toBeTruthy();
+
+    // Fill in required fields
+    fireEvent.changeText(getByTestId('recipe-name-input'), 'Public Test');
+    fireEvent.changeText(getByTestId('description-input'), 'Valid description text here');
+    fireEvent.changeText(getByTestId('prep-time-input'), '5');
+    fireEvent.changeText(getByTestId('cook-time-input'), '5');
+    fireEvent.changeText(getByTestId('servings-input'), '2');
+    fireEvent.changeText(getByTestId('ingredient-name-0'), 'Ing');
+    fireEvent.changeText(getByTestId('ingredient-amount-0'), '1');
+    fireEvent.changeText(getByTestId('ingredient-unit-0'), 'u');
+    fireEvent.changeText(getByTestId('step-0'), 'Step 1 description');
+
+    // Submit (default)
+    const saveButton = getByTestId('save-button');
+    await act(async () => { fireEvent.press(saveButton); });
+
+    await waitFor(() => {
+        expect(saveRecipe).toHaveBeenCalledTimes(1);
+        expect((saveRecipe as jest.Mock).mock.calls[0][0].isPublic).toBe(false);
+    });
+
+    (saveRecipe as jest.Mock).mockClear();
+
+    // Toggle
+    fireEvent.press(switchEl);
+    expect(getByText('On')).toBeTruthy();
+
+    await act(async () => { fireEvent.press(saveButton); });
+
+    await waitFor(() => {
+        expect(saveRecipe).toHaveBeenCalledTimes(1);
+        expect((saveRecipe as jest.Mock).mock.calls[0][0].isPublic).toBe(true);
     });
   });
 });
