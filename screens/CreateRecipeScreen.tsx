@@ -51,11 +51,14 @@ const CreateRecipeScreen: React.FC = () => {
   const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({
-    resolver: zodResolver(recipeFormSchema) as any,
+    resolver: zodResolver(recipeFormSchema),
     defaultValues: {
       name: '',
       description: '',
       category: 'main-course',
+      prepTime: 0,
+      cookTime: 0,
+      servings: 4,
       difficulty: 'medium',
       isPublic: false,
       ingredients: [{ name: '', amount: 1, unit: '' }],
@@ -306,7 +309,7 @@ const CreateRecipeScreen: React.FC = () => {
         ))}
       </View>
 
-      <Button mode="contained" style={styles.submitButton} onPress={handleSubmit(onSubmit as any)} testID="save-button">
+      <Button mode="contained" style={styles.submitButton} onPress={handleSubmit(onSubmit)} testID="save-button">
         Save Recipe
       </Button>
     </ScrollView>
