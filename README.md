@@ -1,34 +1,34 @@
 # YummiShare - Recipe Sharing App
 
-Eine moderne, benutzerfreundliche App zum Erstellen, Verwalten und Teilen von Rezepten für Android und iOS.
+A modern, user-friendly app for creating, managing, and sharing recipes for Android and iOS.
 
 ## 🎯 Features
 
 ### Core Features
-- ✅ Rezepte anlegen und bearbeiten
-- ✅ Kategorisierung von Rezepten (Vorspeisen, Hauptgerichte, Desserts, etc.)
-- ✅ Detaillierte Zubereitungsanleitungen
-- ✅ Rezepte suchen (nach Namen und Zutaten)
-- ✅ Zutaten-basierte Suche
-- ✅ Automatische Portionen-Berechnung (Standard: 4 Portionen)
-- ✅ Einfaches Sharing (WhatsApp, Mail, SMS)
-- ✅ Favoriten-System
-- ✅ Foto-Upload (mehrere Fotos pro Rezept)
+- ✅ Create and edit recipes
+- ✅ Categorization of recipes (Appetizers, Main Courses, Desserts, etc.)
+- ✅ Detailed preparation instructions
+- ✅ Search recipes (by name and ingredients)
+- ✅ Ingredient-based search
+- ✅ Automatic serving calculation (Default: 4 servings)
+- ✅ Easy sharing (WhatsApp, Mail, SMS)
+- ✅ Favorites system
+- ✅ Photo upload (multiple photos per recipe)
 
 ### Premium Features
-- 🎯 Schritt-für-Schritt Kochmodus mit Timer
-- 🛒 Integrierte Einkaufsliste
-- 📊 Nährwert-Berechnung
+- 🎯 Step-by-step cooking mode with timer
+- 🛒 Integrated shopping list
+- 📊 Nutritional value calculation
 - 🌙 Dark Mode
-- 📱 Offline-Modus
-- 👥 Community-Features
-- ⭐ Bewertungssystem
+- 📱 Offline Mode
+- 👥 Community Features
+- ⭐ Rating system
 
-## 🛠️ Technologie-Stack
+## 🛠️ Technology Stack
 
 ### Frontend
 - **React Native** - Cross-Platform Mobile Development
-- **Expo** - Entwicklungstools und Build-System
+- **Expo** - Development tools and build system
 - **TypeScript** - Type-Safe Development
 - **React Navigation** - Navigation & Routing
 - **React Native Paper** - UI Component Library
@@ -37,7 +37,7 @@ Eine moderne, benutzerfreundliche App zum Erstellen, Verwalten und Teilen von Re
 - **Firebase** - Backend-as-a-Service
   - **Firestore** - NoSQL Database
   - **Authentication** - User Management
-  - **Storage** - Cloud Storage für Fotos
+  - **Storage** - Cloud Storage for photos
   - **Cloud Functions** - Serverless Backend Logic
 
 ### Tools & Libraries
@@ -46,17 +46,17 @@ Eine moderne, benutzerfreundliche App zum Erstellen, Verwalten und Teilen von Re
 - **Zod** - Schema Validation
 - **React Hook Form** - Form Management
 - **date-fns** - Date Utilities
-- **expo-image-picker** - Foto Auswahl
-- **expo-sharing** - Sharing Funktionalität
+- **expo-image-picker** - Photo Selection
+- **expo-sharing** - Sharing Functionality
 
-## 📁 Projektstruktur
+## 📁 Project Structure
 
 ```
 yummi-share/
 ├── app/                 # Navigation & App Root
-├── assets/              # Bilder, Fonts, Icons
-├── components/          # Wiederverwendbare UI Komponenten
-├── config/              # Konfigurationsdateien
+├── assets/              # Images, Fonts, Icons
+├── components/          # Reusable UI Components
+├── config/              # Configuration Files
 ├── screens/             # App Screens
 │   ├── auth/           # Authentication Screens
 │   ├── recipe/         # Recipe Screens
@@ -67,31 +67,31 @@ yummi-share/
 └── types/              # TypeScript Type Definitions
 ```
 
-## 🚀 Schnellstart
+## 🚀 Quick Start
 
-### Voraussetzungen
-- Node.js 18+ 
-- npm oder yarn
+### Prerequisites
+- Node.js 18+
+- npm or yarn
 - Expo CLI
-- iOS: Xcode (für Mac)
+- iOS: Xcode (for Mac)
 - Android: Android Studio
 
 ### Installation
 
 ```bash
-# Repository klonen
+# Clone repository
 git clone https://github.com/Bladestar2105/YummiShare.git
 cd YummiShare
 
-# Dependencies installieren
+# Install dependencies
 npm install
 
-# Entwicklungsserver starten
+# Start development server
 npm start
 
-# App auf Gerät/Emulator starten
-npm run ios    # für iOS
-npm run android  # für Android
+# Start app on device/emulator
+npm run ios    # for iOS
+npm run android  # for Android
 ```
 
 ## 📱 App Screens
@@ -120,7 +120,7 @@ npm run android  # für Android
 
 ## 🎨 Design System
 
-### Farben
+### Colors
 - Primary: #FF6B6B (Coral Red)
 - Secondary: #4ECDC4 (Teal)
 - Background: #F7F7F7
@@ -135,13 +135,13 @@ npm run android  # für Android
 - Body: Regular 16px
 - Caption: Regular 14px
 
-## 🔧 Konfiguration
+## 🔧 Configuration
 
 ### Firebase Setup
-1. Firebase Projekt erstellen unter https://console.firebase.google.com
-2. Android App hinzufügen und `google-services.json` zu `android/app/` hinzufügen
-3. iOS App hinzufügen und `GoogleService-Info.plist` zu `ios/YummiShare/` hinzufügen
-4. Firebase Configuration in `config/firebase.ts` anpassen
+1. Create Firebase project at https://console.firebase.google.com
+2. Add Android app and add `google-services.json` to `android/app/`
+3. Add iOS app and add `GoogleService-Info.plist` to `ios/YummiShare/`
+4. Adjust Firebase Configuration in `config/firebase.ts`
 
 ## 📄 Data Models
 
@@ -209,24 +209,24 @@ npm run build:ios
 
 ## 🤝 Contributing
 
-1. Fork das Repository
-2. Feature Branch erstellen (`git checkout -b feature/AmazingFeature`)
+1. Fork the repository
+2. Create Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push zum Branch (`git push origin feature/AmazingFeature`)
-5. Pull Request öffnen
+4. Push to Branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
 
 ## 📝 License
 
-Dieses Projekt ist unter der MIT License lizenziert.
+This project is licensed under the MIT License.
 
 ## 👥 Team
 
-- **Entwickler**: Bladestar2105
-- **Projekt**: YummiShare
+- **Developer**: Bladestar2105
+- **Project**: YummiShare
 
-## 📞 Kontakt
+## 📞 Contact
 
-Bei Fragen oder Problemen: Bitte ein Issue im Repository erstellen.
+For questions or issues: Please create an issue in the repository.
 
 ---
 
