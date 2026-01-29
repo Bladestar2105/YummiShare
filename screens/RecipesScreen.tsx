@@ -1,10 +1,11 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
-import { FAB, Card, Title, Paragraph, ActivityIndicator, Text } from 'react-native-paper';
+import { FAB, ActivityIndicator, Text } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { getAllRecipes } from '../services/localDataService';
 import { Recipe, RootStackParamList } from '../types';
+import RecipeItem from '../components/RecipeItem';
 
 const ListEmptyComponent = () => (
   <View style={styles.emptyContainer}>
@@ -12,23 +13,6 @@ const ListEmptyComponent = () => (
     <Text style={styles.emptySubtext}>Tap the '+' button to create your first one!</Text>
   </View>
 );
-
-const RecipeItem = React.memo(({ item }: { item: Recipe }) => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
-  const handlePress = useCallback(() => {
-    navigation.navigate('RecipeDetail', { recipeId: item.id });
-  }, [navigation, item.id]);
-
-  return (
-    <Card style={styles.card} onPress={handlePress}>
-      <Card.Content>
-        <Title>{item.name}</Title>
-        <Paragraph numberOfLines={2}>{item.description}</Paragraph>
-      </Card.Content>
-    </Card>
-  );
-});
 
 const renderRecipe = ({ item }: { item: Recipe }) => <RecipeItem item={item} />;
 
@@ -100,10 +84,6 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 8,
-  },
-  card: {
-    marginVertical: 8,
-    marginHorizontal: 8,
   },
   emptyContainer: {
     flex: 1,

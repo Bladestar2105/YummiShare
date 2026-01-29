@@ -235,7 +235,6 @@ const CreateRecipeScreen: React.FC = () => {
         {errors.servings && <HelperText type="error">{errors.servings.message}</HelperText>}
 
       <Paragraph style={styles.subtitle}>Difficulty</Paragraph>
-      {/* Difficulty Selection */}
       <Controller
         name="difficulty"
         control={control}
@@ -248,7 +247,6 @@ const CreateRecipeScreen: React.FC = () => {
               { value: 'medium', label: 'Medium', testID: 'difficulty-medium' },
               { value: 'hard', label: 'Hard', testID: 'difficulty-hard' },
             ]}
-            testID="difficulty-selector"
           />
         )}
       />
