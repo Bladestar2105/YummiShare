@@ -203,21 +203,23 @@ const CreateRecipeScreen: React.FC = () => {
       />
       {errors.category && <HelperText type="error">{errors.category.message}</HelperText>}
 
-      <View style={[styles.row, { alignItems: 'center', marginBottom: 8 }]}>
-        <Paragraph style={{ fontSize: 16 }}>Make Recipe Public</Paragraph>
-        <Controller
-          name="isPublic"
-          control={control}
-          render={({ field: { onChange, value } }) => (
+      <Controller
+        name="isPublic"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <View style={[styles.row, styles.switchRow]}>
+            <TouchableRipple onPress={() => onChange(!value)} style={styles.switchLabelContainer}>
+              <Paragraph style={styles.switchLabel}>Make Recipe Public</Paragraph>
+            </TouchableRipple>
             <Switch
               value={value}
               onValueChange={onChange}
               testID="is-public-switch"
               accessibilityLabel="Make Recipe Public"
             />
-          )}
-        />
-      </View>
+          </View>
+        )}
+      />
 
       <Paragraph style={styles.subtitle}>Timings & Servings</Paragraph>
       <View style={styles.row}>
@@ -339,6 +341,9 @@ const styles = StyleSheet.create({
   chip: { margin: 4 },
   submitButton: { marginTop: 24, paddingVertical: 8, marginBottom: 48 },
   categoryContainer: { marginBottom: 8 },
+  switchRow: { alignItems: 'center', marginBottom: 8 },
+  switchLabelContainer: { flex: 1, paddingVertical: 8 },
+  switchLabel: { fontSize: 16 },
 });
 
 export default CreateRecipeScreen;

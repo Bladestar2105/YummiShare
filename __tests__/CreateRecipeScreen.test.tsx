@@ -198,4 +198,26 @@ describe('CreateRecipeScreen', () => {
         expect((saveRecipe as jest.Mock).mock.calls[0][0].isPublic).toBe(true);
     });
   });
+
+  it('toggles public switch when label is pressed', async () => {
+    const { getByText } = renderWithProviders(<CreateRecipeScreen />);
+
+    // Check default state (Private/False)
+    expect(getByText('Off')).toBeTruthy();
+
+    // Find the label text
+    const label = getByText('Make Recipe Public');
+
+    // Press the label
+    fireEvent.press(label);
+
+    // Expect switch to be On
+    expect(getByText('On')).toBeTruthy();
+
+    // Press again
+    fireEvent.press(label);
+
+    // Expect switch to be Off
+    expect(getByText('Off')).toBeTruthy();
+  });
 });
