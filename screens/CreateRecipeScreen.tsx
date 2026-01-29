@@ -189,6 +189,7 @@ const CreateRecipeScreen: React.FC = () => {
               {CATEGORIES.map((cat) => (
                 <Menu.Item
                   key={cat.id}
+                  testID={`category-item-${cat.id}`}
                   onPress={() => {
                     onChange(cat.id);
                     closeCategoryMenu();
