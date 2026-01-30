@@ -60,7 +60,7 @@ const CreateRecipeScreen: React.FC = () => {
       cookTime: 0,
       servings: 4,
       difficulty: 'medium',
-      isPublic: false,
+      isPublic: false, // Default to private
       ingredients: [{ name: '', amount: 1, unit: '' }],
       steps: [{ value: '' }],
       tags: [],
