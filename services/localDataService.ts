@@ -11,6 +11,7 @@ let cachedRecipes: Recipe[] | null = null;
 
 // Helper function to get all recipes
 const getRecipes = async (): Promise<Recipe[]> => {
+  // Optimization: Return cached recipes if available to avoid expensive JSON parsing
   if (cachedRecipes) {
     return cachedRecipes;
   }
@@ -23,7 +24,9 @@ const getRecipes = async (): Promise<Recipe[]> => {
       return cachedRecipes;
     }
 
-    const recipes = jsonValue != null ? JSON.parse(jsonValue) : [];
+    const parsed = jsonValue != null ? JSON.parse(jsonValue) : [];
+    const recipes = Array.isArray(parsed) ? parsed : [];
+
     cachedRecipes = recipes.map((recipe: any) => ({
       ...recipe,
       createdAt: new Date(recipe.createdAt),

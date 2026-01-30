@@ -79,6 +79,7 @@ const runBenchmark = async () => {
         throw new Error(`Warmup failed: Expected ${RECIPE_COUNT} recipes, got ${warmupResult.length}`);
     }
 
+
     const start = process.hrtime.bigint();
 
     for (let i = 0; i < ITERATIONS; i++) {
