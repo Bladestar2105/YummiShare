@@ -80,7 +80,7 @@ const ProfileScreen: React.FC = () => {
         >
           Load Demo Data
         </Button>
-        <Button mode="outlined" onPress={() => {}} style={styles.logoutButton}>
+        <Button mode="outlined" onPress={() => {}} style={styles.logoutButton} textColor="#FF6B6B">
           Logout
         </Button>
       </View>
@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     borderColor: '#FF6B6B',
-    textColor: '#FF6B6B',
   },
 });
 

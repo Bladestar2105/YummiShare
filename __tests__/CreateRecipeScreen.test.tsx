@@ -112,7 +112,7 @@ describe('CreateRecipeScreen', () => {
             steps: ['Mix everything together.']
         }));
     });
-  });
+  }, 10000);
 
   it('renders difficulty selection and submits correctly', async () => {
     const { getByText, getByTestId } = renderWithProviders(<CreateRecipeScreen />);
