@@ -58,7 +58,7 @@ describe('localDataService', () => {
 
       expect(getUserId).toHaveBeenCalled();
       expect(AsyncStorage.setItem).toHaveBeenCalledWith(
-        'recipes',
+        'recipe_mock-uuid',
         expect.stringContaining(mockUserId)
       );
     });

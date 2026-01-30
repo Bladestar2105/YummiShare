@@ -6,6 +6,7 @@ import { getUserId } from './userService';
 
 
 const RECIPES_KEY = 'recipes';
+const RECIPE_PREFIX = 'recipe_';
 
 interface StoredRecipe extends Omit<Recipe, 'createdAt' | 'updatedAt'> {
   createdAt: string;
@@ -13,6 +14,13 @@ interface StoredRecipe extends Omit<Recipe, 'createdAt' | 'updatedAt'> {
 }
 
 let cachedRecipes: Recipe[] | null = null;
+
+// Helper to parse dates
+const parseDates = (recipe: StoredRecipe): Recipe => ({
+  ...recipe,
+  createdAt: new Date(recipe.createdAt),
+  updatedAt: new Date(recipe.updatedAt),
+});
 
 // Helper function to get all recipes
 const getRecipes = async (): Promise<Recipe[]> => {
@@ -22,21 +30,39 @@ const getRecipes = async (): Promise<Recipe[]> => {
   }
 
   try {
-    const jsonValue = await AsyncStorage.getItem(RECIPES_KEY);
+    // 1. Check legacy key for migration
+    const legacyJson = await AsyncStorage.getItem(RECIPES_KEY);
+    if (legacyJson) {
+        console.log('Migrating legacy recipes...');
+        const parsed = JSON.parse(legacyJson);
+        const recipes = (Array.isArray(parsed) ? parsed : []) as StoredRecipe[];
 
-    // Check again if cache was populated while we were waiting
-    if (cachedRecipes) {
-      return cachedRecipes;
+        // Save individually
+        const pairs: [string, string][] = recipes.map(r => [RECIPE_PREFIX + r.id, JSON.stringify(r)]);
+        if (pairs.length > 0) {
+            await AsyncStorage.multiSet(pairs);
+        }
+        await AsyncStorage.removeItem(RECIPES_KEY);
+
+        cachedRecipes = recipes.map(parseDates);
+        return cachedRecipes!;
     }
 
-    const parsed = jsonValue != null ? JSON.parse(jsonValue) : [];
-    const recipes = (Array.isArray(parsed) ? parsed : []) as StoredRecipe[];
+    // 2. Load individual keys
+    const keys = await AsyncStorage.getAllKeys();
+    const recipeKeys = keys.filter(k => k.startsWith(RECIPE_PREFIX));
 
-    cachedRecipes = recipes.map((recipe) => ({
-      ...recipe,
-      createdAt: new Date(recipe.createdAt),
-      updatedAt: new Date(recipe.updatedAt),
-    }));
+    if (recipeKeys.length === 0) {
+        cachedRecipes = [];
+        return cachedRecipes;
+    }
+
+    const pairs = await AsyncStorage.multiGet(recipeKeys);
+    const recipes = pairs
+        .map(([_, value]) => value ? JSON.parse(value) : null)
+        .filter((r): r is StoredRecipe => r !== null);
+
+    cachedRecipes = recipes.map(parseDates);
     return cachedRecipes!;
   } catch (e) {
     console.error('Failed to fetch recipes.', e);
@@ -44,12 +70,23 @@ const getRecipes = async (): Promise<Recipe[]> => {
   }
 };
 
-// Helper function to set all recipes
+// Helper function to set all recipes (used by seedRecipes)
 const setRecipes = async (recipes: Recipe[]): Promise<void> => {
   cachedRecipes = recipes;
   try {
-    const jsonValue = JSON.stringify(recipes);
-    await AsyncStorage.setItem(RECIPES_KEY, jsonValue);
+    // Clear old data first to avoid duplicates or stale data.
+    const allKeys = await AsyncStorage.getAllKeys();
+    const recipeKeys = allKeys.filter(k => k.startsWith(RECIPE_PREFIX));
+    if (recipeKeys.length > 0) {
+        await AsyncStorage.multiRemove(recipeKeys);
+    }
+    // Also remove legacy key just in case
+    await AsyncStorage.removeItem(RECIPES_KEY);
+
+    const pairs: [string, string][] = recipes.map(r => [RECIPE_PREFIX + r.id, JSON.stringify(r)]);
+    if (pairs.length > 0) {
+        await AsyncStorage.multiSet(pairs);
+    }
   } catch (e) {
     console.error('Failed to save recipes.', e);
   }
@@ -67,7 +104,10 @@ export const resetCache = () => {
  * @returns The newly created recipe object.
  */
 export const saveRecipe = async (formData: RecipeFormData): Promise<Recipe> => {
-  const allRecipes = await getRecipes();
+  // Ensure cache is populated
+  if (!cachedRecipes) {
+      await getRecipes();
+  }
 
   const ingredientsWithIds: Ingredient[] = formData.ingredients.map(ingredient => ({
     ...ingredient,
@@ -88,8 +128,14 @@ export const saveRecipe = async (formData: RecipeFormData): Promise<Recipe> => {
     defaultServings: formData.servings,
   };
 
-  allRecipes.push(newRecipe);
-  await setRecipes(allRecipes);
+  cachedRecipes!.push(newRecipe);
+
+  // Optimized save: save only the new recipe
+  try {
+      await AsyncStorage.setItem(RECIPE_PREFIX + newRecipe.id, JSON.stringify(newRecipe));
+  } catch (e) {
+      console.error('Failed to save recipe individually.', e);
+  }
 
   return newRecipe;
 };
@@ -120,15 +166,19 @@ export const getAllRecipes = async (): Promise<Recipe[]> => {
  * @returns The updated recipe object.
  */
 export const updateRecipe = async (id: string, formData: Partial<RecipeFormData>): Promise<Recipe | null> => {
-    const allRecipes = await getRecipes();
-    const recipeIndex = allRecipes.findIndex(r => r.id === id);
+    // Ensure cache is populated
+    if (!cachedRecipes) {
+        await getRecipes();
+    }
+
+    const recipeIndex = cachedRecipes!.findIndex(r => r.id === id);
 
     if (recipeIndex === -1) {
         console.error('Recipe not found for update.');
         return null;
     }
 
-    const originalRecipe = allRecipes[recipeIndex];
+    const originalRecipe = cachedRecipes![recipeIndex];
 
     let ingredients = originalRecipe.ingredients;
     if (formData.ingredients) {
@@ -150,8 +200,14 @@ export const updateRecipe = async (id: string, formData: Partial<RecipeFormData>
         updatedRecipe.totalTime = (formData.prepTime || originalRecipe.prepTime) + (formData.cookTime || originalRecipe.cookTime);
     }
 
-    allRecipes[recipeIndex] = updatedRecipe;
-    await setRecipes(allRecipes);
+    cachedRecipes![recipeIndex] = updatedRecipe;
+
+    // Optimized save
+    try {
+        await AsyncStorage.setItem(RECIPE_PREFIX + updatedRecipe.id, JSON.stringify(updatedRecipe));
+    } catch (e) {
+        console.error('Failed to update recipe individually.', e);
+    }
 
     return updatedRecipe;
 };
@@ -162,15 +218,26 @@ export const updateRecipe = async (id: string, formData: Partial<RecipeFormData>
  * @returns True if deletion was successful, false otherwise.
  */
 export const deleteRecipe = async (id: string): Promise<boolean> => {
-    const allRecipes = await getRecipes();
-    const filteredRecipes = allRecipes.filter(r => r.id !== id);
+    // Ensure cache is populated
+    if (!cachedRecipes) {
+        await getRecipes();
+    }
 
-    if (allRecipes.length === filteredRecipes.length) {
+    const recipeIndex = cachedRecipes!.findIndex(r => r.id === id);
+
+    if (recipeIndex === -1) {
         console.error('Recipe not found for deletion.');
         return false;
     }
 
-    await setRecipes(filteredRecipes);
+    cachedRecipes!.splice(recipeIndex, 1);
+
+    try {
+        await AsyncStorage.removeItem(RECIPE_PREFIX + id);
+    } catch (e) {
+        console.error('Failed to delete recipe individually.', e);
+        return false;
+    }
     return true;
 };
 
