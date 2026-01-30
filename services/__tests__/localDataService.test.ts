@@ -62,6 +62,32 @@ describe('localDataService', () => {
         expect.stringContaining(mockUserId)
       );
     });
+
+    it('should not use hardcoded "local-user" as userId', async () => {
+      const mockUserId = 'generated-user-id';
+      (getUserId as jest.Mock).mockResolvedValue(mockUserId);
+      (uuidv4 as jest.Mock).mockReturnValue('mock-uuid');
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify([]));
+
+      const formData: RecipeFormData = {
+        name: 'Test Recipe',
+        description: 'Test Description',
+        category: 'main-course',
+        prepTime: 10,
+        cookTime: 20,
+        servings: 4,
+        difficulty: 'medium',
+        ingredients: [],
+        steps: [],
+        tags: [],
+        isPublic: false,
+      };
+
+      const savedRecipe = await saveRecipe(formData);
+
+      expect(savedRecipe.userId).toBe(mockUserId);
+      expect(savedRecipe.userId).not.toBe('local-user');
+    });
   });
 
   describe('getAllRecipes', () => {

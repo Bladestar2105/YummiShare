@@ -84,6 +84,7 @@ export const saveRecipe = async (formData: RecipeFormData): Promise<Recipe> => {
     reviewCount: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
+    // Ensure persistent user ID is used
     userId: await getUserId(),
     defaultServings: formData.servings,
   };
