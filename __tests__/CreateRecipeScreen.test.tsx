@@ -200,13 +200,13 @@ describe('CreateRecipeScreen', () => {
   });
 
   it('toggles public switch when label is pressed', async () => {
-    const { getByText } = renderWithProviders(<CreateRecipeScreen />);
+    const { getByText, getByTestId } = renderWithProviders(<CreateRecipeScreen />);
 
     // Check default state (Private/False)
     expect(getByText('Off')).toBeTruthy();
 
-    // Find the label text
-    const label = getByText('Make Recipe Public');
+    // Find the label text using testID
+    const label = getByTestId('is-public-switch-label');
 
     // Press the label
     fireEvent.press(label);

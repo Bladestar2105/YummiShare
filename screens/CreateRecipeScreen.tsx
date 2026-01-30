@@ -209,7 +209,11 @@ const CreateRecipeScreen: React.FC = () => {
         control={control}
         render={({ field: { onChange, value } }) => (
           <View style={[styles.row, styles.switchRow]}>
-            <TouchableRipple onPress={() => onChange(!value)} style={styles.switchLabelContainer}>
+            <TouchableRipple
+              onPress={() => onChange(!value)}
+              style={styles.switchLabelContainer}
+              testID="is-public-switch-label"
+            >
               <Paragraph style={styles.switchLabel}>Make Recipe Public</Paragraph>
             </TouchableRipple>
             <Switch
