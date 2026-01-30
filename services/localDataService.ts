@@ -7,6 +7,11 @@ import { getUserId } from './userService';
 
 const RECIPES_KEY = 'recipes';
 
+interface StoredRecipe extends Omit<Recipe, 'createdAt' | 'updatedAt'> {
+  createdAt: string;
+  updatedAt: string;
+}
+
 let cachedRecipes: Recipe[] | null = null;
 
 // Helper function to get all recipes
@@ -25,9 +30,9 @@ const getRecipes = async (): Promise<Recipe[]> => {
     }
 
     const parsed = jsonValue != null ? JSON.parse(jsonValue) : [];
-    const recipes = Array.isArray(parsed) ? parsed : [];
+    const recipes = (Array.isArray(parsed) ? parsed : []) as StoredRecipe[];
 
-    cachedRecipes = recipes.map((recipe: any) => ({
+    cachedRecipes = recipes.map((recipe) => ({
       ...recipe,
       createdAt: new Date(recipe.createdAt),
       updatedAt: new Date(recipe.updatedAt),

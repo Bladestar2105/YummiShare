@@ -55,7 +55,7 @@ const CreateRecipeScreen: React.FC = () => {
     defaultValues: {
       name: '',
       description: '',
-      category: 'main-course',
+      category: 'main-course', // Default value
       prepTime: 0,
       cookTime: 0,
       servings: 4,
@@ -209,7 +209,11 @@ const CreateRecipeScreen: React.FC = () => {
         control={control}
         render={({ field: { onChange, value } }) => (
           <View style={[styles.row, styles.switchRow]}>
-            <TouchableRipple onPress={() => onChange(!value)} style={styles.switchLabelContainer}>
+            <TouchableRipple
+              onPress={() => onChange(!value)}
+              style={styles.switchLabelContainer}
+              testID="is-public-switch-label"
+            >
               <Paragraph style={styles.switchLabel}>Make Recipe Public</Paragraph>
             </TouchableRipple>
             <Switch
