@@ -108,8 +108,10 @@ export const INGREDIENT_CATEGORIES = [
 ]
 
 // Helper Functions
+const CATEGORY_MAP = new Map<Category, CategoryInfo>(CATEGORIES.map(cat => [cat.id, cat]))
+
 export const getCategoryById = (id: Category): CategoryInfo | undefined => {
-  return CATEGORIES.find(cat => cat.id === id)
+  return CATEGORY_MAP.get(id)
 }
 
 export const getCategoryName = (id: Category): string => {
