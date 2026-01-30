@@ -1,15 +1,11 @@
-
-> yummi-share@1.0.0 web
-> expo start --web
-
 Starting project at /app
 Starting Metro Bundler
 Waiting on http://localhost:8081
 Logs for your project will appear below.
 Web ./index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
-Web ./index.ts ▓▓▓▓▓▓▓▓░░░░░░░░ 53.3% (177/392)
-Web ./index.ts ▓▓▓▓▓▓▓▓▓▓░░░░░░ 68.6% (536/647)
-Web Bundled 10029ms index.ts (905 modules)
+Web ./index.ts ▓▓▓▓▓▓▓▓░░░░░░░░ 55.2% (215/432)
+Web ./index.ts ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 70.9% (543/645)
+Web Bundled 10421ms index.ts (909 modules)
  LOG  [web] Logs will appear in the browser console
 Web ./index.ts ░░░░░░░░░░░░░░░░  0.0% (0/1)
 Web Bundled 46ms index.ts (1 module)
