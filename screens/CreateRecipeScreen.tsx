@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { ScrollView, StyleSheet, View, Alert } from 'react-native';
 import { Button, TextInput, Title, Paragraph, HelperText, IconButton, Switch, SegmentedButtons, Chip, Menu, TouchableRipple } from 'react-native-paper';
 import { useForm, useFieldArray, Controller, Resolver } from 'react-hook-form';
@@ -46,6 +46,24 @@ const recipeFormSchema = z.object({
 // Infer TypeScript type from Zod schema
 type FormValues = z.infer<typeof recipeFormSchema>;
 
+const CategoryMenuItems = React.memo(({ onChange, onClose }: { onChange: (value: Category) => void, onClose: () => void }) => {
+  return (
+    <>
+      {CATEGORIES.map((cat) => (
+        <Menu.Item
+          key={cat.id}
+          testID={`category-item-${cat.id}`}
+          onPress={() => {
+            onChange(cat.id);
+            onClose();
+          }}
+          title={`${cat.icon} ${cat.name}`}
+        />
+      ))}
+    </>
+  );
+});
+
 const CreateRecipeScreen: React.FC = () => {
   const [currentTag, setCurrentTag] = useState('');
   const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
@@ -67,8 +85,8 @@ const CreateRecipeScreen: React.FC = () => {
     },
   });
 
-  const openCategoryMenu = () => setCategoryMenuVisible(true);
-  const closeCategoryMenu = () => setCategoryMenuVisible(false);
+  const openCategoryMenu = useCallback(() => setCategoryMenuVisible(true), []);
+  const closeCategoryMenu = useCallback(() => setCategoryMenuVisible(false), []);
 
   const { fields: ingredientFields, append: appendIngredient, remove: removeIngredient } = useFieldArray({
     control,
@@ -187,17 +205,7 @@ const CreateRecipeScreen: React.FC = () => {
                 </TouchableRipple>
               }
             >
-              {CATEGORIES.map((cat) => (
-                <Menu.Item
-                  key={cat.id}
-                  testID={`category-item-${cat.id}`}
-                  onPress={() => {
-                    onChange(cat.id);
-                    closeCategoryMenu();
-                  }}
-                  title={`${cat.icon} ${cat.name}`}
-                />
-              ))}
+              <CategoryMenuItems onChange={onChange} onClose={closeCategoryMenu} />
             </Menu>
           </View>
         )}
