@@ -170,6 +170,7 @@ const CreateRecipeScreen: React.FC = () => {
         control={control}
         render={({ field: { onChange, value } }) => (
           <View style={styles.categoryContainer}>
+            {/* Category selection using a dropdown Menu */}
             <Menu
               visible={categoryMenuVisible}
               onDismiss={closeCategoryMenu}
