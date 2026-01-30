@@ -255,6 +255,7 @@ const CreateRecipeScreen: React.FC = () => {
                 value: level.id,
                 label: level.name,
                 testID: `difficulty-${level.id}`,
+                accessibilityLabel: `Select ${level.name} difficulty`,
               }))}
             />
           </View>
