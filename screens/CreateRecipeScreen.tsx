@@ -123,6 +123,7 @@ const CreateRecipeScreen: React.FC = () => {
         difficulty: data.difficulty as Difficulty,
         isPublic: data.isPublic,
         steps: data.steps.map(step => step.value),
+        // Map tags to string array
         tags: data.tags ? data.tags.map(tag => tag.value) : [],
       };
 
@@ -319,6 +320,7 @@ const CreateRecipeScreen: React.FC = () => {
             value={currentTag}
             onChangeText={setCurrentTag}
             onSubmitEditing={handleAddTag}
+            returnKeyType="done"
             right={<TextInput.Icon icon="plus" onPress={handleAddTag} />}
         />
       </View>
