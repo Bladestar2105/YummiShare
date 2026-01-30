@@ -105,6 +105,7 @@ describe('CreateRecipeScreen', () => {
         expect(saveRecipe).toHaveBeenCalledWith(expect.objectContaining({
             name: 'Test Recipe',
             category: 'dessert',
+            difficulty: 'medium',
             prepTime: 10,
             cookTime: 20,
             servings: 4,
