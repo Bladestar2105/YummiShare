@@ -55,7 +55,7 @@ const CreateRecipeScreen: React.FC = () => {
     defaultValues: {
       name: '',
       description: '',
-      category: 'main-course',
+      category: 'main-course', // Default value
       prepTime: 0,
       cookTime: 0,
       servings: 4,
