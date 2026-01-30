@@ -9,6 +9,8 @@ import { RootStackParamList } from '../types'; // Ensure this is defined
 // Define the type for the route prop
 type RecipeDetailScreenRouteProp = RouteProp<RootStackParamList, 'RecipeDetail'>;
 
+const IngredientIcon = (props: { color: string; style: any }) => <List.Icon {...props} icon="food-variant" />;
+
 const RecipeDetailScreen: React.FC = () => {
   const route = useRoute<RecipeDetailScreenRouteProp>();
   const { recipeId } = route.params;
@@ -78,7 +80,7 @@ const RecipeDetailScreen: React.FC = () => {
             key={ingredient.id}
             title={`${ingredient.name}`}
             description={`${ingredient.amount} ${ingredient.unit}`}
-            left={() => <List.Icon icon="food-variant" />}
+            left={IngredientIcon}
           />
         ))}
       </List.Section>
