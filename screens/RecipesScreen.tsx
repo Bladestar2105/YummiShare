@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { FAB, ActivityIndicator, Text } from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { getAllRecipes } from '../services/localDataService';
+import { getAllRecipes, getDataVersion } from '../services/localDataService';
 import { Recipe, RootStackParamList } from '../types';
 import RecipeItem from '../components/RecipeItem';
 
@@ -22,18 +22,30 @@ const RecipesScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const lastVersionRef = useRef(-1);
 
   // useFocusEffect runs when the screen comes into focus
   useFocusEffect(
     useCallback(() => {
+      const currentVersion = getDataVersion();
+
+      // If the data hasn't changed since the last fetch, skip updating state
+      // to avoid unnecessary async calls and re-renders.
+      if (currentVersion === lastVersionRef.current) {
+        return;
+      }
+
       const fetchRecipes = async () => {
         try {
-          setIsLoading(true);
+          // Only show loader on the very first load
+          if (lastVersionRef.current === -1) {
+            setIsLoading(true);
+          }
           const storedRecipes = await getAllRecipes();
           setRecipes(storedRecipes);
+          lastVersionRef.current = currentVersion;
         } catch (error) {
           console.error("Failed to load recipes:", error);
-          // Optionally, show an error message to the user
         } finally {
           setIsLoading(false);
         }
@@ -41,9 +53,8 @@ const RecipesScreen: React.FC = () => {
 
       fetchRecipes();
 
-      // Return a cleanup function if needed, not necessary here
       return () => {};
-    }, [])
+    }, []) // Empty dependencies to prevent re-running when 'recipes' state updates
   );
 
   const handleCreateRecipe = useCallback(() => {

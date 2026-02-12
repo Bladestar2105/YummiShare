@@ -14,6 +14,13 @@ interface StoredRecipe extends Omit<Recipe, 'createdAt' | 'updatedAt'> {
 }
 
 let cachedRecipes: Recipe[] | null = null;
+let dataVersion = 0;
+
+/**
+ * Returns the current version of the recipes data.
+ * Increments whenever a recipe is added, updated, or deleted.
+ */
+export const getDataVersion = () => dataVersion;
 
 // Helper to parse dates
 const parseDates = (recipe: StoredRecipe): Recipe => ({
@@ -73,6 +80,7 @@ const getRecipes = async (): Promise<Recipe[]> => {
 // Helper function to set all recipes (used by seedRecipes)
 const setRecipes = async (recipes: Recipe[]): Promise<void> => {
   cachedRecipes = recipes;
+  dataVersion++;
   try {
     // Clear old data first to avoid duplicates or stale data.
     const allKeys = await AsyncStorage.getAllKeys();
@@ -94,6 +102,7 @@ const setRecipes = async (recipes: Recipe[]): Promise<void> => {
 
 export const resetCache = () => {
   cachedRecipes = null;
+  dataVersion++;
 };
 
 // --- Public API ---
@@ -129,7 +138,8 @@ export const saveRecipe = async (formData: RecipeFormData): Promise<Recipe> => {
     defaultServings: formData.servings,
   };
 
-  cachedRecipes!.push(newRecipe);
+  cachedRecipes = [...cachedRecipes!, newRecipe];
+  dataVersion++;
 
   // Optimized save: save only the new recipe
   try {
@@ -201,7 +211,10 @@ export const updateRecipe = async (id: string, formData: Partial<RecipeFormData>
         updatedRecipe.totalTime = (formData.prepTime || originalRecipe.prepTime) + (formData.cookTime || originalRecipe.cookTime);
     }
 
-    cachedRecipes![recipeIndex] = updatedRecipe;
+    const nextRecipes = [...cachedRecipes!];
+    nextRecipes[recipeIndex] = updatedRecipe;
+    cachedRecipes = nextRecipes;
+    dataVersion++;
 
     // Optimized save
     try {
@@ -231,7 +244,8 @@ export const deleteRecipe = async (id: string): Promise<boolean> => {
         return false;
     }
 
-    cachedRecipes!.splice(recipeIndex, 1);
+    cachedRecipes = cachedRecipes!.filter((_, i) => i !== recipeIndex);
+    dataVersion++;
 
     try {
         await AsyncStorage.removeItem(RECIPE_PREFIX + id);
