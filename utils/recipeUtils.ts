@@ -327,21 +327,16 @@ export const generateId = (): string => {
 export const getRecipeSuggestions = (recipes: Recipe[], count: number = 3): Recipe[] => {
   if (recipes.length === 0) return []
 
-  if (recipes.length <= count) {
-    // Return shuffled copy of all recipes
-    return [...recipes].sort(() => 0.5 - Math.random())
+  const n = recipes.length
+  const countToPick = Math.min(count, n)
+  const result = [...recipes]
+
+  // Use Fisher-Yates shuffle for better performance and randomness
+  // We only need to shuffle the first 'countToPick' elements
+  for (let i = 0; i < countToPick; i++) {
+    const j = Math.floor(Math.random() * (n - i)) + i;
+    [result[i], result[j]] = [result[j], result[i]];
   }
 
-  const suggestions: Recipe[] = []
-  const indices = new Set<number>()
-
-  while (indices.size < count) {
-    const index = Math.floor(Math.random() * recipes.length)
-    if (!indices.has(index)) {
-      indices.add(index)
-      suggestions.push(recipes[index])
-    }
-  }
-
-  return suggestions
+  return result.slice(0, countToPick)
 }
